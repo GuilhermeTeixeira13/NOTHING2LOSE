@@ -70,7 +70,9 @@
         android:text="Login"
         android:textColor="@color/login_button_color"
         app:strokeColor="@color/login_button_color"
-        app:strokeWidth="2dp" />
+        app:strokeWidth="2dp"
+        android:onClick="onLoginClicked"
+        />
 
     <TextView
         android:id="@+id/register_text"

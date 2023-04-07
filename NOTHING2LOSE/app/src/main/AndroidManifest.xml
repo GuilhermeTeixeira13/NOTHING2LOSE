@@ -27,6 +27,10 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+
+        <activity android:name=".RegisterActivity" />
+
+        <activity android:name=".GameActivity" />
     </application>
 
 </manifest>
