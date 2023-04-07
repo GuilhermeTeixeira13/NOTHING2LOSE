@@ -12,9 +12,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
 
 import android.util.Log;
 import android.view.View;
@@ -24,7 +21,7 @@ import com.google.android.material.textfield.TextInputEditText;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    TextInputEditText nicknameEditText;
+    TextInputEditText editTextNickname;
     TextInputEditText editTextPassword;
     TextInputEditText editTextPasswordRepeat;
 
@@ -33,13 +30,13 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.register);
 
-       nicknameEditText = findViewById(R.id.editTextNickname);
+       editTextNickname = findViewById(R.id.editTextNickname);
        editTextPassword = findViewById(R.id.editTextPassword);
        editTextPasswordRepeat = findViewById(R.id.editTextPasswordRepeat);
     }
 
     public void onRegisterClicked(View view) {
-        String nickname = nicknameEditText.getText().toString().trim();
+        String nickname = editTextNickname.getText().toString().trim();
         String password = editTextPassword.getText().toString().trim();
         String passwordRepeat = editTextPasswordRepeat.getText().toString().trim();
 
@@ -91,7 +88,7 @@ public class RegisterActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Boolean result) {
             if (result) {
-                String nickname = nicknameEditText.getText().toString().trim();
+                String nickname = editTextNickname.getText().toString().trim();
                 String password = editTextPassword.getText().toString().trim();
                 new UserRegistrationTask().execute(nickname, password);
             } else {
@@ -119,6 +116,8 @@ public class RegisterActivity extends AppCompatActivity {
                     pstmt.setString(2, password);
                     pstmt.executeUpdate();
                 }
+
+                Toast.makeText(RegisterActivity.this, "Successful registration!", Toast.LENGTH_LONG).show();
                 saveUserInSharedPreferences();
                 goToGamePage();
             } catch (Exception e) {
@@ -128,7 +127,7 @@ public class RegisterActivity extends AppCompatActivity {
             return null;
         }
     }
-    
+
     public void onLoginLinkClicked(View view){
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
@@ -143,7 +142,7 @@ public class RegisterActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
-        editor.putString("username", nicknameEditText.getText().toString());
+        editor.putString("username", editTextNickname.getText().toString());
         editor.putString("password", editTextPassword.getText().toString());
         editor.commit();
     }

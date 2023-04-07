@@ -36,10 +36,10 @@
         app:hintTextColor="@color/black">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editTextEmail"
+            android:id="@+id/editTextNickname"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Email" />
+            android:hint="Nickname" />
 
     </com.google.android.material.textfield.TextInputLayout>
 

@@ -77,59 +77,7 @@ public class GameActivity extends AppCompatActivity {
         return awards;
     }
 
-    public void AwardAChoosen(View v) throws SQLException {
-        Log.d("MyApp", "Clicked on A award.");
-
-        new DatabaseQueryTask().execute();
-    }
-
-    private class DatabaseQueryTask extends AsyncTask<Void, Void, List<String>> {
-        private Exception exception;
-
-        protected List<String> doInBackground(Void... voids) {
-            List<String> results = new ArrayList<>();
-
-            String url = "jdbc:postgresql://nothing2lose-db.carkfyqrpaoi.eu-north-1.rds.amazonaws.com:5432/NOTHING2LOSEDB";
-            String username = "postgres";
-            String password = "8iy5df232";
-
-            try {
-                Class.forName("org.postgresql.Driver");
-                Connection conn = DriverManager.getConnection(url, username, password);
-                Statement stmt = conn.createStatement();
-                ResultSet rs = stmt.executeQuery("SELECT * FROM users");
-
-                while (rs.next()) {
-                    // Process the data retrieved from the database
-                    // For example, you can add the values to a list
-                    String id = String.valueOf(rs.getInt("ID"));
-                    String user = rs.getString("username");
-                    String pass = rs.getString("password");
-                    results.add("ID: " + id + ", Username: " + user + ", Password: " + pass);
-                }
-
-                rs.close();
-                stmt.close();
-                conn.close();
-            } catch (Exception e) {
-                Log.e("MyApp", "Error executing query", e);
-                exception = e;
-            }
-
-            return results;
-        }
-
-        protected void onPostExecute(List<String> results) {
-            if (exception != null) {
-                Toast.makeText(GameActivity.this, "Error executing query: " + exception.getMessage(), Toast.LENGTH_SHORT).show();
-            } else {
-                // Update UI with the database query results
-                for (String result : results) {
-                    Log.d("MyApp", result);
-                }
-            }
-        }
-    }
+    public void AwardAChoosen(View v) { Log.d("MyApp", "Clicked on A award.");}
 
     public void AwardBChoosen(View v){
         Log.d("MyApp", "Clicked on B award.");
