@@ -25,6 +25,8 @@ import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputEditText;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 public class MainActivity extends AppCompatActivity {
 
     TextInputEditText editTextNickname;
@@ -52,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
     public void onLoginClicked(View view){
         String nickname = editTextNickname.getText().toString().trim();
         String password = editTextPassword.getText().toString().trim();
+        String hashedPassword = BCrypt.hashpw(password, RegisterActivity.SALT);
 
         if (nickname.isEmpty() || password.isEmpty()) {
             // Empty fields
@@ -59,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        new MainActivity.LoginTask().execute(nickname, password);
+        new MainActivity.LoginTask().execute(nickname, hashedPassword);
     }
 
     private class LoginTask extends AsyncTask<String, Void, Boolean> {
@@ -119,8 +122,10 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
+        String hashedPassword = BCrypt.hashpw(editTextPassword.getText().toString(), RegisterActivity.SALT);
+
         editor.putString("username", editTextNickname.getText().toString());
-        editor.putString("password", editTextPassword.getText().toString());
+        editor.putString("password", hashedPassword);
         editor.commit();
     }
 }

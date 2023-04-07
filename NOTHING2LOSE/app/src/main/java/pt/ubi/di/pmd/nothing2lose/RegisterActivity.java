@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import org.mindrot.jbcrypt.BCrypt;
 import com.google.android.material.textfield.TextInputEditText;
 
 public class RegisterActivity extends AppCompatActivity {
@@ -24,6 +25,8 @@ public class RegisterActivity extends AppCompatActivity {
     TextInputEditText editTextNickname;
     TextInputEditText editTextPassword;
     TextInputEditText editTextPasswordRepeat;
+
+    static String SALT = "$2a$10$1234567890123456789012";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,6 +107,7 @@ public class RegisterActivity extends AppCompatActivity {
         protected Void doInBackground(String... params) {
             String nickname = params[0];
             String password = params[1];
+            String hashedPassword = BCrypt.hashpw(password, SALT);
 
             String svurl = "jdbc:postgresql://nothing2lose-db.carkfyqrpaoi.eu-north-1.rds.amazonaws.com:5432/NOTHING2LOSEDB";
             String svusername = "postgres";
@@ -113,11 +117,17 @@ public class RegisterActivity extends AppCompatActivity {
                 String insertQuery = "INSERT INTO users (username, password) VALUES (?, ?)";
                 try (PreparedStatement pstmt = conn.prepareStatement(insertQuery)) {
                     pstmt.setString(1, nickname);
-                    pstmt.setString(2, password);
+                    pstmt.setString(2, hashedPassword);
                     pstmt.executeUpdate();
                 }
 
-                Toast.makeText(RegisterActivity.this, "Successful registration!", Toast.LENGTH_LONG).show();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(), "Successful registration!", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
                 saveUserInSharedPreferences();
                 goToGamePage();
             } catch (Exception e) {
@@ -142,8 +152,10 @@ public class RegisterActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
+        String hashedPassword = BCrypt.hashpw(editTextPassword.getText().toString(), SALT);
+
         editor.putString("username", editTextNickname.getText().toString());
-        editor.putString("password", editTextPassword.getText().toString());
+        editor.putString("password", hashedPassword);
         editor.commit();
     }
 }
