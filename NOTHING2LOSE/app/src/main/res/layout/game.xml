@@ -1,43 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/titleText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Choose a ticket!"
+        android:textColor="@color/black"
+        android:textSize="24sp"
+        android:layout_marginTop="25dp"
+        android:layout_marginBottom="35dp"
+        android:layout_gravity="center_horizontal"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/awardA"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:text="A"
+        android:layout_marginBottom="16sp"
+        android:onClick="AwardAChoosen"
+        android:backgroundTint="@color/gray"/>
 
-        <Button
-            android:id="@+id/awardA"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="A"
-            android:onClick="AwardAChoosen"/>
+    <Button
+        android:id="@+id/awardB"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="B"
+        android:layout_marginBottom="16sp"
+        android:onClick="AwardBChoosen"
+        android:backgroundTint="@color/gray"/>
 
-        <Button
-            android:id="@+id/awardB"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="B"
-            android:onClick="AwardBChoosen"/>
+    <Button
+        android:id="@+id/awardC"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="C"
+        android:layout_marginBottom="16sp"
+        android:onClick="AwardCChoosen"
+        android:backgroundTint="@color/gray"/>
 
-        <Button
-            android:id="@+id/awardC"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="C"
-            android:onClick="AwardCChoosen"/>
+    <Button
+        android:id="@+id/awardD"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="D"
+        android:layout_marginBottom="16sp"
+        android:onClick="AwardDChoosen"
+        android:backgroundTint="@color/gray"/>
 
-        <Button
-            android:id="@+id/awardD"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="D"
-            android:onClick="AwardDChoosen"/>
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/logoutButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="70sp"
+        android:textAllCaps="true"
+        app:backgroundTint="@color/gray"
+        app:icon="@drawable/icon_logout"
+        app:iconGravity="textStart"
+        android:layout_gravity="end|bottom"
+        android:onClick="onLogoutClicked"/>
 
-    </LinearLayout>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(Boolean result) {
             if (result) {
                 Toast.makeText(MainActivity.this, "Successful Login!", Toast.LENGTH_LONG).show();
-
+                saveUserInSharedPreferences();
                 goToGamePage();
             } else {
                 Toast.makeText(MainActivity.this, "We're sorry, but we couldn't log you in.", Toast.LENGTH_LONG).show();
@@ -113,5 +113,14 @@ public class MainActivity extends AppCompatActivity {
     public void onRegisterLinkClicked(View view){
         Intent intent = new Intent(this, RegisterActivity.class);
         startActivity(intent);
+    }
+
+    public void saveUserInSharedPreferences(){
+        SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        editor.putString("username", editTextNickname.getText().toString());
+        editor.putString("password", editTextPassword.getText().toString());
+        editor.commit();
     }
 }

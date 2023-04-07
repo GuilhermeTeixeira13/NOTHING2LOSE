@@ -2,6 +2,9 @@ package pt.ubi.di.pmd.nothing2lose;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
@@ -89,5 +92,16 @@ public class GameActivity extends AppCompatActivity {
 
     public void AwardDChoosen(View v){
         Log.d("MyApp", "Clicked on D award.");
+    }
+
+    public void onLogoutClicked(View v){
+        SharedPreferences preferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.remove("username");
+        editor.remove("password");
+        editor.apply();
+
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
     }
 }
