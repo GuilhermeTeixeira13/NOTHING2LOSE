@@ -23,7 +23,7 @@ import com.google.android.material.textfield.TextInputEditText;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    TextInputEditText editTextNickname;
+    TextInputEditText editTextEmail;
     TextInputEditText editTextPassword;
     TextInputEditText editTextPasswordRepeat;
 
@@ -32,17 +32,17 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.register);
 
-       editTextNickname = findViewById(R.id.editTextNickname);
+       editTextEmail = findViewById(R.id.editTextEmail);
        editTextPassword = findViewById(R.id.editTextPassword);
        editTextPasswordRepeat = findViewById(R.id.editTextPasswordRepeat);
     }
 
     public void onRegisterClicked(View view) {
-        String nickname = editTextNickname.getText().toString().trim();
+        String email = editTextEmail.getText().toString().trim();
         String password = editTextPassword.getText().toString().trim();
         String passwordRepeat = editTextPasswordRepeat.getText().toString().trim();
 
-        if (nickname.isEmpty() || password.isEmpty() || passwordRepeat.isEmpty()) {
+        if (email.isEmpty() || password.isEmpty() || passwordRepeat.isEmpty()) {
             // Empty fields
             Toast.makeText(RegisterActivity.this, "Hey there! It seems like you left some fields empty!", Toast.LENGTH_LONG).show();
             return;
@@ -54,7 +54,7 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
 
-        new UserRegistrationTask().execute(nickname, password);
+        new UserRegistrationTask().execute(email, password);
     }
 
     private class UserRegistrationTask extends AsyncTask<String, Void, Boolean> {
@@ -73,7 +73,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(String... params) {
-            String nickname = params[0];
+            String email = params[0];
             String password = params[1];
             String salt = BCrypt.gensalt();
             String hashedPassword = BCrypt.hashpw(password, salt);
@@ -84,17 +84,17 @@ public class RegisterActivity extends AppCompatActivity {
 
             try (Connection conn = DriverManager.getConnection(svurl, svusername, svpassword)) {
                 // Check if there is another user with the same username
-                String selectQuery = "SELECT COUNT(*) FROM users WHERE username=?";
+                String selectQuery = "SELECT COUNT(*) FROM users WHERE email = ?";
                 try (PreparedStatement pstmt = conn.prepareStatement(selectQuery)) {
-                    pstmt.setString(1, nickname);
+                    pstmt.setString(1, email);
                     try (ResultSet rs = pstmt.executeQuery()) {
                         rs.next();
                         int count = rs.getInt(1);
                         if (count == 0) {
                             // User does not exist, insert into database
-                            String insertQuery = "INSERT INTO users (username, password, salt) VALUES (?, ?, ?)";
+                            String insertQuery = "INSERT INTO users (email, password, salt) VALUES (?, ?, ?)";
                             try (PreparedStatement pstmt2 = conn.prepareStatement(insertQuery)) {
-                                pstmt2.setString(1, nickname);
+                                pstmt2.setString(1, email);
                                 pstmt2.setString(2, hashedPassword);
                                 pstmt2.setString(3, salt);
                                 pstmt2.executeUpdate();
@@ -120,7 +120,7 @@ public class RegisterActivity extends AppCompatActivity {
                 saveUserInSharedPreferences();
                 goToGamePage();
             } else {
-                Toast.makeText(RegisterActivity.this, "Sorry, the nickname is already taken!", Toast.LENGTH_LONG).show();
+                Toast.makeText(RegisterActivity.this, "Sorry, the email is already in use!", Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -140,7 +140,7 @@ public class RegisterActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
-        editor.putString("username", editTextNickname.getText().toString());
+        editor.putString("email", editTextEmail.getText().toString());
         editor.putString("password", editTextPassword.getText().toString());
         editor.commit();
     }

@@ -24,7 +24,7 @@ import org.mindrot.jbcrypt.BCrypt;
 
 public class MainActivity extends AppCompatActivity {
 
-    TextInputEditText editTextNickname;
+    TextInputEditText editTextEmail;
     TextInputEditText editTextPassword;
 
     @Override
@@ -32,31 +32,31 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
 
-        editTextNickname = findViewById(R.id.editTextNickname);
+        editTextEmail = findViewById(R.id.editTextEmail);
         editTextPassword = findViewById(R.id.editTextPassword);
 
         // Retrieve user's login credentials
         SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
-        String username = sharedPreferences.getString("username", "");
+        String email = sharedPreferences.getString("email", "");
         String password = sharedPreferences.getString("password", "");
 
         // Check if the username and password are not empty before using them to log the user in
-        if (!username.isEmpty() && !password.isEmpty()) {
-            new LoginTask().execute(username, password);
+        if (!email.isEmpty() && !password.isEmpty()) {
+            new LoginTask().execute(email, password);
         }
     }
 
     public void onLoginClicked(View view) {
-        String nickname = editTextNickname.getText().toString().trim();
+        String email = editTextEmail.getText().toString().trim();
         String password = editTextPassword.getText().toString().trim();
 
-        if (nickname.isEmpty() || password.isEmpty()) {
+        if (email.isEmpty() || password.isEmpty()) {
             // Empty fields
             Toast.makeText(MainActivity.this, "Hey there! It seems like you left some fields empty!", Toast.LENGTH_LONG).show();
             return;
         }
 
-        new LoginTask().execute(nickname, password);
+        new LoginTask().execute(email, password);
     }
 
     private class LoginTask extends AsyncTask<String, Void, Boolean> {
@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(String... params) {
-            String nickname = params[0];
+            String email = params[0];
             String password = params[1];
 
             String svurl = "jdbc:postgresql://nothing2lose-db.carkfyqrpaoi.eu-north-1.rds.amazonaws.com:5432/NOTHING2LOSEDB";
@@ -84,8 +84,8 @@ public class MainActivity extends AppCompatActivity {
 
             try (Connection conn = DriverManager.getConnection(svurl, svusername, svpassword)) {
 
-                PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM users WHERE username = ?");
-                pstmt.setString(1, nickname);
+                PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM users WHERE email = ?");
+                pstmt.setString(1, email);
                 ResultSet rs = pstmt.executeQuery();
 
                 if (rs.next()) {
@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
-        editor.putString("username", editTextNickname.getText().toString());
+        editor.putString("email", editTextEmail.getText().toString());
         editor.putString("password", editTextPassword.getText().toString());
         editor.commit();
     }
