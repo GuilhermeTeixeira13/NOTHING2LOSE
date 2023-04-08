@@ -2,6 +2,7 @@ package pt.ubi.di.pmd.nothing2lose;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -53,16 +54,29 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
 
-        new CheckIfUserExistsTask().execute(nickname, password);
+        new UserRegistrationTask().execute(nickname, password);
     }
 
-    private class CheckIfUserExistsTask extends AsyncTask<String, Void, Boolean> {
+    private class UserRegistrationTask extends AsyncTask<String, Void, Boolean> {
         private Exception exception;
+
+        private ProgressDialog progressDialog;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = new ProgressDialog(RegisterActivity.this);
+            progressDialog.setMessage("Processing, please wait...");
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+        }
 
         @Override
         protected Boolean doInBackground(String... params) {
             String nickname = params[0];
             String password = params[1];
+            String salt = BCrypt.gensalt();
+            String hashedPassword = BCrypt.hashpw(password, salt);
 
             String svurl = "jdbc:postgresql://nothing2lose-db.carkfyqrpaoi.eu-north-1.rds.amazonaws.com:5432/NOTHING2LOSEDB";
             String svusername = "postgres";
@@ -76,67 +90,41 @@ public class RegisterActivity extends AppCompatActivity {
                     try (ResultSet rs = pstmt.executeQuery()) {
                         rs.next();
                         int count = rs.getInt(1);
-                        return count == 0;
+                        if (count == 0) {
+                            // User does not exist, insert into database
+                            String insertQuery = "INSERT INTO users (username, password, salt) VALUES (?, ?, ?)";
+                            try (PreparedStatement pstmt2 = conn.prepareStatement(insertQuery)) {
+                                pstmt2.setString(1, nickname);
+                                pstmt2.setString(2, hashedPassword);
+                                pstmt2.setString(3, salt);
+                                pstmt2.executeUpdate();
+                            }
+                            return true;
+                        }
+                        return false;
                     }
                 }
             } catch (Exception e) {
                 Log.e("MyApp", "Error executing query", e);
                 exception = e;
-                return false;
             }
+            return false;
         }
 
         @Override
         protected void onPostExecute(Boolean result) {
+            progressDialog.dismiss();
+
             if (result) {
-                String nickname = editTextNickname.getText().toString().trim();
-                String password = editTextPassword.getText().toString().trim();
-                new UserRegistrationTask().execute(nickname, password);
+                Toast.makeText(getApplicationContext(), "Successful registration!", Toast.LENGTH_SHORT).show();
+                saveUserInSharedPreferences();
+                goToGamePage();
             } else {
                 Toast.makeText(RegisterActivity.this, "Sorry, the nickname is already taken!", Toast.LENGTH_LONG).show();
             }
         }
     }
 
-    private class UserRegistrationTask extends AsyncTask<String, Void, Void> {
-        private Exception exception;
-
-        @Override
-        protected Void doInBackground(String... params) {
-            String nickname = params[0];
-            String password = params[1];
-            String salt = BCrypt.gensalt();
-            String hashedPassword = BCrypt.hashpw(password, salt);
-
-            String svurl = "jdbc:postgresql://nothing2lose-db.carkfyqrpaoi.eu-north-1.rds.amazonaws.com:5432/NOTHING2LOSEDB";
-            String svusername = "postgres";
-            String svpassword = "8iy5df232";
-
-            try (Connection conn = DriverManager.getConnection(svurl, svusername, svpassword)) {
-                String insertQuery = "INSERT INTO users (username, password, salt) VALUES (?, ?, ?)";
-                try (PreparedStatement pstmt = conn.prepareStatement(insertQuery)) {
-                    pstmt.setString(1, nickname);
-                    pstmt.setString(2, hashedPassword);
-                    pstmt.setString(3, salt);
-                    pstmt.executeUpdate();
-                }
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getApplicationContext(), "Successful registration!", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-                saveUserInSharedPreferences();
-                goToGamePage();
-            } catch (Exception e) {
-                Log.e("MyApp", "Error executing query", e);
-                exception = e;
-            }
-            return null;
-        }
-    }
 
     public void onLoginLinkClicked(View view){
         Intent intent = new Intent(this, MainActivity.class);
