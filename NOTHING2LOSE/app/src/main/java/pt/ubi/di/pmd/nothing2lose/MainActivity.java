@@ -12,15 +12,9 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
+
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputEditText;
@@ -47,14 +41,13 @@ public class MainActivity extends AppCompatActivity {
 
         // Check if the username and password are not empty before using them to log the user in
         if (!username.isEmpty() && !password.isEmpty()) {
-            new MainActivity.LoginTask().execute(username, password);
+            new CheckIfUserExistsTask().execute(username, password);
         }
     }
 
     public void onLoginClicked(View view){
         String nickname = editTextNickname.getText().toString().trim();
         String password = editTextPassword.getText().toString().trim();
-        String hashedPassword = BCrypt.hashpw(password, RegisterActivity.SALT);
 
         if (nickname.isEmpty() || password.isEmpty()) {
             // Empty fields
@@ -62,7 +55,52 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        new MainActivity.LoginTask().execute(nickname, hashedPassword);
+        new CheckIfUserExistsTask().execute(nickname, password);
+    }
+
+    private class CheckIfUserExistsTask extends AsyncTask<String, Void, Boolean> {
+        private Exception exception;
+
+        String nickname;
+        String password;
+
+
+        @Override
+        protected Boolean doInBackground(String... params) {
+            nickname = params[0];
+            password = params[1];
+
+            String svurl = "jdbc:postgresql://nothing2lose-db.carkfyqrpaoi.eu-north-1.rds.amazonaws.com:5432/NOTHING2LOSEDB";
+            String svusername = "postgres";
+            String svpassword = "8iy5df232";
+
+            try (Connection conn = DriverManager.getConnection(svurl, svusername, svpassword)) {
+                // Check if there is a user with the given username and password
+                String selectQuery = "SELECT COUNT(*) FROM users WHERE username=?";
+                try (PreparedStatement pstmt = conn.prepareStatement(selectQuery)) {
+                    pstmt.setString(1, nickname);
+                    try (ResultSet rs = pstmt.executeQuery()) {
+                        rs.next();
+                        int count = rs.getInt(1);
+
+                        return count > 0;
+                    }
+                }
+            } catch (Exception e) {
+                Log.e("MyApp", "Error executing query", e);
+                exception = e;
+                return false;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            if (result) {
+                new MainActivity.LoginTask().execute(nickname, password);
+            } else {
+                Toast.makeText(MainActivity.this, "We're sorry, but we couldn't log you in. 1", Toast.LENGTH_LONG).show();
+            }
+        }
     }
 
     private class LoginTask extends AsyncTask<String, Void, Boolean> {
@@ -79,15 +117,22 @@ public class MainActivity extends AppCompatActivity {
 
             try (Connection conn = DriverManager.getConnection(svurl, svusername, svpassword)) {
                 // Check if there is a user with the given username and password
-                String selectQuery = "SELECT COUNT(*) FROM users WHERE username=? AND password=?";
+                String selectQuery = "SELECT * FROM users WHERE username = '" + nickname + "'";
+                Log.d("MyApp", selectQuery);
                 try (PreparedStatement pstmt = conn.prepareStatement(selectQuery)) {
-                    pstmt.setString(1, nickname);
-                    pstmt.setString(2, password);
-                    try (ResultSet rs = pstmt.executeQuery()) {
-                        rs.next();
-                        int count = rs.getInt(1);
-                        return count > 0;
+                    ResultSet rs = pstmt.executeQuery();
+                    if (rs.next()) {
+                        String salt = rs.getString("salt");
+                        String hashedPassword = BCrypt.hashpw(password, salt);
+
+                        Log.d("MyApp", "HP LOGIN: "+ hashedPassword);
+                        Log.d("MyApp", "HP DB: "+ rs.getString("password"));
+
+                        if(hashedPassword.equals(rs.getString("password"))){
+                            return true;
+                        }
                     }
+                    return false;
                 }
             } catch (Exception e) {
                 Log.e("MyApp", "Error executing query", e);
@@ -99,11 +144,10 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Boolean result) {
             if (result) {
-                Toast.makeText(MainActivity.this, "Successful Login!", Toast.LENGTH_LONG).show();
                 saveUserInSharedPreferences();
                 goToGamePage();
             } else {
-                Toast.makeText(MainActivity.this, "We're sorry, but we couldn't log you in.", Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this, "We're sorry, but we couldn't log you in. 2", Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -122,10 +166,8 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
-        String hashedPassword = BCrypt.hashpw(editTextPassword.getText().toString(), RegisterActivity.SALT);
-
         editor.putString("username", editTextNickname.getText().toString());
-        editor.putString("password", hashedPassword);
+        editor.putString("password", editTextPassword.getText().toString());
         editor.commit();
     }
 }

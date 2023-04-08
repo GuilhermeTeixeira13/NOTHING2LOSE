@@ -26,8 +26,6 @@ public class RegisterActivity extends AppCompatActivity {
     TextInputEditText editTextPassword;
     TextInputEditText editTextPasswordRepeat;
 
-    static String SALT = "$2a$10$1234567890123456789012";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,17 +105,19 @@ public class RegisterActivity extends AppCompatActivity {
         protected Void doInBackground(String... params) {
             String nickname = params[0];
             String password = params[1];
-            String hashedPassword = BCrypt.hashpw(password, SALT);
+            String salt = BCrypt.gensalt();
+            String hashedPassword = BCrypt.hashpw(password, salt);
 
             String svurl = "jdbc:postgresql://nothing2lose-db.carkfyqrpaoi.eu-north-1.rds.amazonaws.com:5432/NOTHING2LOSEDB";
             String svusername = "postgres";
             String svpassword = "8iy5df232";
 
             try (Connection conn = DriverManager.getConnection(svurl, svusername, svpassword)) {
-                String insertQuery = "INSERT INTO users (username, password) VALUES (?, ?)";
+                String insertQuery = "INSERT INTO users (username, password, salt) VALUES (?, ?, ?)";
                 try (PreparedStatement pstmt = conn.prepareStatement(insertQuery)) {
                     pstmt.setString(1, nickname);
                     pstmt.setString(2, hashedPassword);
+                    pstmt.setString(3, salt);
                     pstmt.executeUpdate();
                 }
 
@@ -152,10 +152,8 @@ public class RegisterActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
-        String hashedPassword = BCrypt.hashpw(editTextPassword.getText().toString(), SALT);
-
         editor.putString("username", editTextNickname.getText().toString());
-        editor.putString("password", hashedPassword);
+        editor.putString("password", editTextPassword.getText().toString());
         editor.commit();
     }
 }
