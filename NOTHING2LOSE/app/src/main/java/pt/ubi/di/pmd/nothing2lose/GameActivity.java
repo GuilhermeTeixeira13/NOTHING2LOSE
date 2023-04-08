@@ -66,7 +66,6 @@ public class GameActivity extends AppCompatActivity {
         for (int i = 0; i < 4; i++) {
             int prize = (int) generateRandomPrize(lambda, minPrize, maxPrize);
             prizes.add(prize);
-            Log.d("MyApp", "Ticket Prize: " + prize);
         }
 
         Collections.sort(prizes);
