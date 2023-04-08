@@ -2,6 +2,7 @@ package pt.ubi.di.pmd.nothing2lose;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -41,11 +42,11 @@ public class MainActivity extends AppCompatActivity {
 
         // Check if the username and password are not empty before using them to log the user in
         if (!username.isEmpty() && !password.isEmpty()) {
-            new CheckIfUserExistsTask().execute(username, password);
+            new LoginTask().execute(username, password);
         }
     }
 
-    public void onLoginClicked(View view){
+    public void onLoginClicked(View view) {
         String nickname = editTextNickname.getText().toString().trim();
         String password = editTextPassword.getText().toString().trim();
 
@@ -55,56 +56,22 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        new CheckIfUserExistsTask().execute(nickname, password);
-    }
-
-    private class CheckIfUserExistsTask extends AsyncTask<String, Void, Boolean> {
-        private Exception exception;
-
-        String nickname;
-        String password;
-
-
-        @Override
-        protected Boolean doInBackground(String... params) {
-            nickname = params[0];
-            password = params[1];
-
-            String svurl = "jdbc:postgresql://nothing2lose-db.carkfyqrpaoi.eu-north-1.rds.amazonaws.com:5432/NOTHING2LOSEDB";
-            String svusername = "postgres";
-            String svpassword = "8iy5df232";
-
-            try (Connection conn = DriverManager.getConnection(svurl, svusername, svpassword)) {
-                // Check if there is a user with the given username and password
-                String selectQuery = "SELECT COUNT(*) FROM users WHERE username=?";
-                try (PreparedStatement pstmt = conn.prepareStatement(selectQuery)) {
-                    pstmt.setString(1, nickname);
-                    try (ResultSet rs = pstmt.executeQuery()) {
-                        rs.next();
-                        int count = rs.getInt(1);
-
-                        return count > 0;
-                    }
-                }
-            } catch (Exception e) {
-                Log.e("MyApp", "Error executing query", e);
-                exception = e;
-                return false;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(Boolean result) {
-            if (result) {
-                new MainActivity.LoginTask().execute(nickname, password);
-            } else {
-                Toast.makeText(MainActivity.this, "We're sorry, but we couldn't log you in. 1", Toast.LENGTH_LONG).show();
-            }
-        }
+        new LoginTask().execute(nickname, password);
     }
 
     private class LoginTask extends AsyncTask<String, Void, Boolean> {
         private Exception exception;
+
+        private ProgressDialog progressDialog;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = new ProgressDialog(MainActivity.this);
+            progressDialog.setMessage("Processing, please wait...");
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+        }
 
         @Override
         protected Boolean doInBackground(String... params) {
@@ -116,24 +83,21 @@ public class MainActivity extends AppCompatActivity {
             String svpassword = "8iy5df232";
 
             try (Connection conn = DriverManager.getConnection(svurl, svusername, svpassword)) {
-                // Check if there is a user with the given username and password
-                String selectQuery = "SELECT * FROM users WHERE username = '" + nickname + "'";
-                Log.d("MyApp", selectQuery);
-                try (PreparedStatement pstmt = conn.prepareStatement(selectQuery)) {
-                    ResultSet rs = pstmt.executeQuery();
-                    if (rs.next()) {
-                        String salt = rs.getString("salt");
-                        String hashedPassword = BCrypt.hashpw(password, salt);
 
-                        Log.d("MyApp", "HP LOGIN: "+ hashedPassword);
-                        Log.d("MyApp", "HP DB: "+ rs.getString("password"));
+                PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM users WHERE username = ?");
+                pstmt.setString(1, nickname);
+                ResultSet rs = pstmt.executeQuery();
 
-                        if(hashedPassword.equals(rs.getString("password"))){
-                            return true;
-                        }
+                if (rs.next()) {
+                    String salt = rs.getString("salt");
+                    String hashedPassword = BCrypt.hashpw(password, salt);
+
+                    if (hashedPassword.equals(rs.getString("password"))) {
+                        return true;
                     }
-                    return false;
                 }
+
+                return false;
             } catch (Exception e) {
                 Log.e("MyApp", "Error executing query", e);
                 exception = e;
@@ -143,11 +107,13 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Boolean result) {
+            progressDialog.dismiss();
+
             if (result) {
                 saveUserInSharedPreferences();
                 goToGamePage();
             } else {
-                Toast.makeText(MainActivity.this, "We're sorry, but we couldn't log you in. 2", Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this, "We're sorry, but we couldn't log you in.", Toast.LENGTH_LONG).show();
             }
         }
     }
