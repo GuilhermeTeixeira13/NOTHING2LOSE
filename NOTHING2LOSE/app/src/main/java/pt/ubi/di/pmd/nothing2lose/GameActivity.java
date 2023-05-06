@@ -48,6 +48,13 @@ public class GameActivity extends AppCompatActivity {
         ArrayList<Award> awards = createAwards(lambda, minPrize, maxPrize);
         Log.d("MyApp", "Awards sorted: " + awards.toString());
 
+        KeyGenerator keyAlgorithm = new KeyGenerator();
+        List<byte[]> keys = keyAlgorithm.generateKeys();
+        for(int i = 0; i < 4; i++) {
+            String keyString = keyAlgorithm.byteArrayToHexString(keys.get(i));
+            System.out.println(keyString);
+        }
+
         Collections.shuffle(awards);
         Log.d("MyApp", "Awards shuffled: " + awards.toString());
     }
