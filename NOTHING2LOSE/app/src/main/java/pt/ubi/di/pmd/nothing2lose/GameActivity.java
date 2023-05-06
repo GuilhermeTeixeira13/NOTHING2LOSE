@@ -5,14 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -20,7 +15,6 @@ import java.util.Random;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 public class GameActivity extends AppCompatActivity {
 
@@ -48,11 +42,19 @@ public class GameActivity extends AppCompatActivity {
         ArrayList<Award> awards = createAwards(lambda, minPrize, maxPrize);
         Log.d("MyApp", "Awards sorted: " + awards.toString());
 
+
         KeyGenerator keyAlgorithm = new KeyGenerator();
         List<byte[]> keys = keyAlgorithm.generateKeys();
         for(int i = 0; i < 4; i++) {
             String keyString = keyAlgorithm.byteArrayToHexString(keys.get(i));
             System.out.println(keyString);
+        }
+
+        CalculateHMAC calculateHMAC = new CalculateHMAC();
+        List<byte[]> hmacs = calculateHMAC.claculateHmac(keys, awards);
+        for (int i = 0; i < 4; i++){
+            String hmacString = calculateHMAC.byteArrayToHexString(hmacs.get(i));
+            System.out.println(hmacString);
         }
 
         Collections.shuffle(awards);
@@ -85,6 +87,7 @@ public class GameActivity extends AppCompatActivity {
 
         return awards;
     }
+
 
     public void AwardAChoosen(View v) { Log.d("MyApp", "Clicked on A award.");}
 
