@@ -30,6 +30,7 @@ public class GameActivity extends AppCompatActivity {
     ArrayList<Award> awards;
     List<byte[]> keys;
     List<byte[]> hmacs;
+    List<byte[]> cifrados;
     SecretKey HMACkey;
 
     @Override
@@ -71,6 +72,13 @@ public class GameActivity extends AppCompatActivity {
             String hmacString = CalculateHMAC.byteArrayToHexString(hmac);
             Log.d("MyApp", hmacString);
         }
+
+        // Cifra awards com as respetivas chaves
+        CipherAwards cipherAwards = new CipherAwards();
+        cifrados = CipherAwards.encrypt(keys, 0, awards);
+        String bilheteCifradoBase64 = Base64.getEncoder().encodeToString(bilheteCifrado);
+
+        System.out.println("Bilhete cifrado: " + bilheteCifradoBase64);
     }
 
     public static SecretKey generateSecretKey() {
