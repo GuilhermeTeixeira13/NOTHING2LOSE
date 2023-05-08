@@ -1,6 +1,10 @@
 package pt.ubi.di.pmd.nothing2lose;
 
-public class Award {
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+
+public class Award implements Serializable {
     int price;
     int category; // 0 -> Simple (30s) // 1 -> Medium (60s) // 2 -> Rare (120s) // 3 -> Legendary (240s)
 
@@ -31,5 +35,13 @@ public class Award {
                 "price=" + price +
                 ", category=" + category +
                 '}';
+    }
+
+    public byte[] toByteArray() throws Exception {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(bos);
+        oos.writeObject(this);
+        oos.flush();
+        return bos.toByteArray();
     }
 }

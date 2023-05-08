@@ -5,22 +5,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
+
 
 public class GameActivity extends AppCompatActivity {
 
@@ -28,6 +26,11 @@ public class GameActivity extends AppCompatActivity {
     Button ButtonAwardB;
     Button ButtonAwardC;
     Button ButtonAwardD;
+
+    ArrayList<Award> awards;
+    List<byte[]> keys;
+    List<byte[]> hmacs;
+    SecretKey HMACkey;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,11 +48,42 @@ public class GameActivity extends AppCompatActivity {
         double minPrize = 0.0;
         double maxPrize = 1000.0;
 
-        ArrayList<Award> awards = createAwards(lambda, minPrize, maxPrize);
+        // Ordenados do menor para o maior prémio
+        awards = createAwards(lambda, minPrize, maxPrize);
         Log.d("MyApp", "Awards sorted: " + awards.toString());
 
-        Collections.shuffle(awards);
-        Log.d("MyApp", "Awards shuffled: " + awards.toString());
+        // Calculam-se as chaves, ordenadas da menos complexa à mais complexa
+        KeyGen keyAlgorithm = new KeyGen();
+        keys = keyAlgorithm.generateKeys();
+        for(byte[] key : keys) {
+            String keyString = KeyGen.byteArrayToHexString(key);
+            Log.d("MyApp", keyString);
+        }
+
+        // Calcula uma key para o HMAC
+        SecretKey HMACkey = generateSecretKey();
+        Log.d("MyApp", "Chave para o HMAC: " + Base64.getEncoder().encodeToString(HMACkey.getEncoded()));
+
+        // Calcula HMAC para cada award
+        CalculateHMAC calculateHMAC = new CalculateHMAC();
+        hmacs = calculateHMAC.calcHMAC(HMACkey, awards);
+        for (byte[] hmac : hmacs){
+            String hmacString = CalculateHMAC.byteArrayToHexString(hmac);
+            Log.d("MyApp", hmacString);
+        }
+    }
+
+    public static SecretKey generateSecretKey() {
+        SecretKey secretKey = null;
+        try {
+            // Generate a key to use in hmac
+            KeyGenerator keyGen = KeyGenerator.getInstance("HmacSHA256");
+            keyGen.init(256);
+            secretKey = keyGen.generateKey();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return secretKey;
     }
 
     public static double generateRandomPrize(double lambda, double min, double max) {
@@ -79,18 +113,49 @@ public class GameActivity extends AppCompatActivity {
         return awards;
     }
 
-    public void AwardAChoosen(View v) { Log.d("MyApp", "Clicked on A award.");}
+
+    public void AwardAChoosen(View v) {
+        Log.d("MyApp", "Clicked on A award.");
+
+        Random random = new Random();
+        int randomNumber = random.nextInt(4);
+
+        Log.d("MyApp", "Escolheu o award: " + awards.get(randomNumber));
+        Log.d("MyApp", "Chave usada para cifrar: " + KeyGen.byteArrayToHexString(keys.get(randomNumber)));
+        Log.d("MyApp", "HMAC: " + CalculateHMAC.byteArrayToHexString(hmacs.get(randomNumber)));
+    }
 
     public void AwardBChoosen(View v){
         Log.d("MyApp", "Clicked on B award.");
+
+        Random random = new Random();
+        int randomNumber = random.nextInt(4);
+
+        Log.d("MyApp", "Escolheu o award: " + awards.get(randomNumber));
+        Log.d("MyApp", "Chave usada para cifrar: " + KeyGen.byteArrayToHexString(keys.get(randomNumber)));
+        Log.d("MyApp", "HMAC: " + CalculateHMAC.byteArrayToHexString(hmacs.get(randomNumber)));
     }
 
     public void AwardCChoosen(View v){
         Log.d("MyApp", "Clicked on C award.");
+
+        Random random = new Random();
+        int randomNumber = random.nextInt(4);
+
+        Log.d("MyApp", "Escolheu o award: " + awards.get(randomNumber));
+        Log.d("MyApp", "Chave usada para cifrar: " + KeyGen.byteArrayToHexString(keys.get(randomNumber)));
+        Log.d("MyApp", "HMAC: " + CalculateHMAC.byteArrayToHexString(hmacs.get(randomNumber)));
     }
 
     public void AwardDChoosen(View v){
         Log.d("MyApp", "Clicked on D award.");
+
+        Random random = new Random();
+        int randomNumber = random.nextInt(4);
+
+        Log.d("MyApp", "Escolheu o award: " + awards.get(randomNumber));
+        Log.d("MyApp", "Chave usada para cifrar: " + KeyGen.byteArrayToHexString(keys.get(randomNumber)));
+        Log.d("MyApp", "HMAC: " + CalculateHMAC.byteArrayToHexString(hmacs.get(randomNumber)));
     }
 
     public void onLogoutClicked(View v){
