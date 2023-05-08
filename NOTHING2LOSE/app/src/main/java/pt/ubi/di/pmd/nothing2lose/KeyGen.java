@@ -2,7 +2,6 @@ package pt.ubi.di.pmd.nothing2lose;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class KeyGen {
@@ -10,49 +9,58 @@ public class KeyGen {
     private static final int MEDIUM_KEY_BITS = 21;
     private static final int RARE_KEY_BITS = 22;
     private static final int LEGENDARY_KEY_BITS = 23;
+    private int tamanhoChave;
+    private int tamanhoAleatorio;
+    private byte[] chave;
+    private byte[] chaveSimples;
+    private byte[] chaveMedio;
+    private byte[] chaveRaro;
+    private byte[] chaveLendario;
+
+    public byte[] ChaveCifra(int tamanhoAleatorio, int tamanhoZeros) {
+        this.tamanhoAleatorio = tamanhoAleatorio;
+        this.tamanhoChave = tamanhoAleatorio + tamanhoZeros;
+        this.chave = new byte[tamanhoChave / 8];
+        return this.chave;
+    }
+
+    public byte[] gerarChave(byte[] chave) {
+        SecureRandom random = new SecureRandom();
+        byte[] aleatorio = new byte[tamanhoAleatorio / 8];
+        random.nextBytes(aleatorio);
+        System.arraycopy(aleatorio, 0, chave, 0, aleatorio.length);
+        return chave;
+    }
 
     public List<byte[]> generateKeys() {
         SecureRandom random = new SecureRandom();
         List<byte[]> keys = new ArrayList<>();
 
-        // Gerar chave simples
-        byte[] simpleKeyBytes = new byte[16];
-        Arrays.fill(simpleKeyBytes, (byte) 0); // preenche com 0s
-        random.nextBytes(Arrays.copyOfRange(simpleKeyBytes, 0, 2)); // preenche 2 bytes com valores aleatórios a partir da posição 0
-        byte[] simpleKey = new byte[16]; // tamanho da chave final sem os 108 bits preenchidos com 0s
-        System.arraycopy(simpleKeyBytes, 0, simpleKey, 0, simpleKeyBytes.length);
-        keys.add(simpleKey);
+        chaveSimples = ChaveCifra(20, 108);
+        byte[] chaveSimplesGerada = gerarChave(chaveSimples);
+        keys.add(chaveSimplesGerada);
+        // utilizar a chaveSimplesGerada para o prémio simples
 
+        chaveMedio = ChaveCifra(21, 107);
+        byte[] chaveMedioGerada = gerarChave(chaveMedio);
+        keys.add(chaveMedioGerada);
+        // utilizar a chaveMedioGerada para o prémio médio
 
-        // Gerar chave média
-        byte[] mediumKeyBytes = new byte[16];
-        Arrays.fill(mediumKeyBytes, (byte) 0); // preenche com 0s
-        random.nextBytes(Arrays.copyOfRange(mediumKeyBytes, 0, 3)); // preenche 3 bytes com valores aleatórios a partir da posição 0
-        byte[] mediumKey = new byte[16]; // tamanho da chave final sem os 107 bits preenchidos com 0s
-        System.arraycopy(mediumKeyBytes, 0, mediumKey, 0, mediumKeyBytes.length);
-        keys.add(mediumKey);
+        chaveRaro = ChaveCifra(22, 106);
+        byte[] chaveRaroGerada = gerarChave(chaveRaro);
+        keys.add(chaveRaroGerada);
+        // utilizar a chaveRaroGerada para o prémio raro
 
-
-        // Gerar chave rara
-        byte[] rareKeyBytes = new byte[16];
-        Arrays.fill(rareKeyBytes, (byte) 0); // preenche com 0s
-        random.nextBytes(Arrays.copyOfRange(rareKeyBytes, 0, 3)); // preenche 3 bytes com valores aleatórios a partir da posição 0
-        byte[] rareKey = new byte[16]; // tamanho da chave final sem os 106 bits preenchidos com 0s
-        System.arraycopy(rareKeyBytes, 0, rareKey, 0, rareKeyBytes.length);
-        keys.add(rareKey);
-
-
-        // Gerar chave lendária
-        byte[] legendaryKeyBytes = new byte[16];
-        Arrays.fill(legendaryKeyBytes, (byte) 0); // preenche com 0s
-        random.nextBytes(Arrays.copyOfRange(legendaryKeyBytes, 0, 3)); // preenche 3 bytes com valores aleatórios a partir da posição 0
-        byte[] legendaryKey = new byte[16]; // tamanho da chave final sem os 105 bits preenchidos com 0s
-        System.arraycopy(legendaryKeyBytes, 0, legendaryKey, 0, legendaryKeyBytes.length);
-        keys.add(legendaryKey);
+        chaveLendario = ChaveCifra(23, 105);
+        byte[] chaveLendarioGerada = gerarChave(chaveLendario);
+        keys.add(chaveLendarioGerada);
+        // utilizar a chaveLendarioGerada para o prémio lendário
 
 
         return keys;
     }
+
+
 
     public static String byteArrayToHexString(byte[] bytes) {
         StringBuilder sb = new StringBuilder();
