@@ -13,9 +13,9 @@ public class KeyGen {
     private int tamanhoAleatorio;
     private byte[] chave;
     private byte[] chaveSimples;
-    private byte[] chaveMedio;
-    private byte[] chaveRaro;
-    private byte[] chaveLendario;
+    private byte[] chaveMedia;
+    private byte[] chaveRara;
+    private byte[] chaveLendaria;
 
     public byte[] ChaveCifra(int tamanhoAleatorio, int tamanhoZeros) {
         this.tamanhoAleatorio = tamanhoAleatorio;
@@ -36,25 +36,26 @@ public class KeyGen {
         SecureRandom random = new SecureRandom();
         List<byte[]> keys = new ArrayList<>();
 
+        // Gerar chave Simples
         chaveSimples = ChaveCifra(SIMPLE_KEY_BITS, 108);
         byte[] chaveSimplesGerada = gerarChave(chaveSimples);
         keys.add(chaveSimplesGerada);
-        // utilizar a chaveSimplesGerada para o prémio simples
 
-        chaveMedio = ChaveCifra(MEDIUM_KEY_BITS, 107);
-        byte[] chaveMedioGerada = gerarChave(chaveMedio);
+        // Gerar chave Media
+        chaveMedia = ChaveCifra(MEDIUM_KEY_BITS, 107);
+        byte[] chaveMedioGerada = gerarChave(chaveMedia);
         keys.add(chaveMedioGerada);
-        // utilizar a chaveMedioGerada para o prémio médio
 
-        chaveRaro = ChaveCifra(RARE_KEY_BITS, 106);
-        byte[] chaveRaroGerada = gerarChave(chaveRaro);
+        // Gerar chave Rara
+        chaveRara = ChaveCifra(RARE_KEY_BITS, 106);
+        byte[] chaveRaroGerada = gerarChave(chaveRara);
         keys.add(chaveRaroGerada);
-        // utilizar a chaveRaroGerada para o prémio raro
 
-        chaveLendario = ChaveCifra(LEGENDARY_KEY_BITS, 105);
-        byte[] chaveLendarioGerada = gerarChave(chaveLendario);
+        // Gerar chave Lendaria
+        chaveLendaria = ChaveCifra(LEGENDARY_KEY_BITS, 105);
+        byte[] chaveLendarioGerada = gerarChave(chaveLendaria);
         keys.add(chaveLendarioGerada);
-        // utilizar a chaveLendarioGerada para o prémio lendário
+
 
 
         return keys;
