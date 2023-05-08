@@ -4,7 +4,7 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 
-public class KeyGenerator {
+public class KeyGen {
     private static final int SIMPLE_KEY_BITS = 20;
     private static final int MEDIUM_KEY_BITS = 21;
     private static final int RARE_KEY_BITS = 22;
@@ -45,7 +45,7 @@ public class KeyGenerator {
         return keys;
     }
 
-    public String byteArrayToHexString(byte[] bytes) {
+    public static String byteArrayToHexString(byte[] bytes) {
         StringBuilder sb = new StringBuilder();
         for (byte b : bytes) {
             sb.append(String.format("%02X", b));
