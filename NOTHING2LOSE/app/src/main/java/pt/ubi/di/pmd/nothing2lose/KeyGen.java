@@ -2,6 +2,7 @@ package pt.ubi.di.pmd.nothing2lose;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class KeyGen {
@@ -15,32 +16,40 @@ public class KeyGen {
         List<byte[]> keys = new ArrayList<>();
 
         // Gerar chave simples
-        byte[] simpleKeyBytes = new byte[(SIMPLE_KEY_BITS + 7) / 8];
-        random.nextBytes(simpleKeyBytes);
-        byte[] simpleKey = new byte[SIMPLE_KEY_BITS / 8 + 13];
+        byte[] simpleKeyBytes = new byte[16];
+        Arrays.fill(simpleKeyBytes, (byte) 0); // preenche com 0s
+        random.nextBytes(Arrays.copyOfRange(simpleKeyBytes, 0, 2)); // preenche 2 bytes com valores aleatórios a partir da posição 0
+        byte[] simpleKey = new byte[16]; // tamanho da chave final sem os 108 bits preenchidos com 0s
         System.arraycopy(simpleKeyBytes, 0, simpleKey, 0, simpleKeyBytes.length);
         keys.add(simpleKey);
 
+
         // Gerar chave média
-        byte[] mediumKeyBytes = new byte[(MEDIUM_KEY_BITS + 7) / 8];
-        random.nextBytes(mediumKeyBytes);
-        byte[] mediumKey = new byte[MEDIUM_KEY_BITS / 8 + 13];
+        byte[] mediumKeyBytes = new byte[16];
+        Arrays.fill(mediumKeyBytes, (byte) 0); // preenche com 0s
+        random.nextBytes(Arrays.copyOfRange(mediumKeyBytes, 0, 3)); // preenche 3 bytes com valores aleatórios a partir da posição 0
+        byte[] mediumKey = new byte[16]; // tamanho da chave final sem os 107 bits preenchidos com 0s
         System.arraycopy(mediumKeyBytes, 0, mediumKey, 0, mediumKeyBytes.length);
         keys.add(mediumKey);
 
+
         // Gerar chave rara
-        byte[] rareKeyBytes = new byte[(RARE_KEY_BITS + 7) / 8];
-        random.nextBytes(rareKeyBytes);
-        byte[] rareKey = new byte[RARE_KEY_BITS / 8 + 13];
+        byte[] rareKeyBytes = new byte[16];
+        Arrays.fill(rareKeyBytes, (byte) 0); // preenche com 0s
+        random.nextBytes(Arrays.copyOfRange(rareKeyBytes, 0, 3)); // preenche 3 bytes com valores aleatórios a partir da posição 0
+        byte[] rareKey = new byte[16]; // tamanho da chave final sem os 106 bits preenchidos com 0s
         System.arraycopy(rareKeyBytes, 0, rareKey, 0, rareKeyBytes.length);
         keys.add(rareKey);
 
+
         // Gerar chave lendária
-        byte[] legendaryKeyBytes = new byte[(LEGENDARY_KEY_BITS + 7) / 8];
-        random.nextBytes(legendaryKeyBytes);
-        byte[] legendaryKey = new byte[LEGENDARY_KEY_BITS / 8 + 13];
+        byte[] legendaryKeyBytes = new byte[16];
+        Arrays.fill(legendaryKeyBytes, (byte) 0); // preenche com 0s
+        random.nextBytes(Arrays.copyOfRange(legendaryKeyBytes, 0, 3)); // preenche 3 bytes com valores aleatórios a partir da posição 0
+        byte[] legendaryKey = new byte[16]; // tamanho da chave final sem os 105 bits preenchidos com 0s
         System.arraycopy(legendaryKeyBytes, 0, legendaryKey, 0, legendaryKeyBytes.length);
         keys.add(legendaryKey);
+
 
         return keys;
     }
