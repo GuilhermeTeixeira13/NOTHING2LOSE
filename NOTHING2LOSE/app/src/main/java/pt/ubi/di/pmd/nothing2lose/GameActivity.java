@@ -30,6 +30,7 @@ public class GameActivity extends AppCompatActivity {
     ArrayList<Award> awards;
     List<byte[]> keys;
     List<byte[]> hmacs;
+    SecretKey HMACkey;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,12 +61,12 @@ public class GameActivity extends AppCompatActivity {
         }
 
         // Calcula uma key para o HMAC
-        SecretKey secretKey = generateSecretKey();
-        Log.d("MyApp", "Chave para o HMAC: " + Base64.getEncoder().encodeToString(secretKey.getEncoded()));
+        SecretKey HMACkey = generateSecretKey();
+        Log.d("MyApp", "Chave para o HMAC: " + Base64.getEncoder().encodeToString(HMACkey.getEncoded()));
 
         // Calcula HMAC para cada award
         CalculateHMAC calculateHMAC = new CalculateHMAC();
-        hmacs = calculateHMAC.calcHMAC(secretKey, awards);
+        hmacs = calculateHMAC.calcHMAC(HMACkey, awards);
         for (byte[] hmac : hmacs){
             String hmacString = CalculateHMAC.byteArrayToHexString(hmac);
             Log.d("MyApp", hmacString);
