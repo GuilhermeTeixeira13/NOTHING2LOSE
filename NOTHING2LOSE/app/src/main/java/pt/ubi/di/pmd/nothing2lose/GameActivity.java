@@ -77,14 +77,15 @@ public class GameActivity extends AppCompatActivity {
         // Cifra awards com as respetivas chaves
         CipherAwards cipherAwards = new CipherAwards();
         try {
-            cifrados = cipherAwards.encrypt(keys, iv, awards);
+            cifrados = cipherAwards.encrypt(keys, awards);
+            for (byte[] cipher : cifrados) {
+                String bilheteCifradoBase64 = Base64.getEncoder().encodeToString(cipher);
+                System.out.println("Bilhete cifrado: " + bilheteCifradoBase64);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        for (byte[] cipher : cifrados) {
-            String bilheteCifradoBase64 = Base64.getEncoder().encodeToString(cipher);
-            System.out.println("Bilhete cifrado: " + bilheteCifradoBase64);
-        }
+
     }
 
     public static SecretKey generateSecretKey() {
