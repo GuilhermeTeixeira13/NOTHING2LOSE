@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 
 public class CipherAwards {
 
@@ -17,7 +18,8 @@ public class CipherAwards {
         for (int i = 0; i < 4 ; i++) {
             Award award = awards.get(i);
             byte[] Keys = keys.get(i);
-            cipher.init(Cipher.ENCRYPT_MODE, (Key) Keys, ivSpec);
+            SecretKeySpec sks = new SecretKeySpec(Keys, CIPHER_ALGORITHM);
+            cipher.init(Cipher.ENCRYPT_MODE, sks, ivSpec);
             byte[] cifradoValue = cipher.doFinal(award.toByteArray());
             cifrados.add(cifradoValue);
         }
