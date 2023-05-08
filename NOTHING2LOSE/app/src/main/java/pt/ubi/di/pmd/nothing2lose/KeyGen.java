@@ -36,22 +36,22 @@ public class KeyGen {
         SecureRandom random = new SecureRandom();
         List<byte[]> keys = new ArrayList<>();
 
-        chaveSimples = ChaveCifra(20, 108);
+        chaveSimples = ChaveCifra(SIMPLE_KEY_BITS, 108);
         byte[] chaveSimplesGerada = gerarChave(chaveSimples);
         keys.add(chaveSimplesGerada);
         // utilizar a chaveSimplesGerada para o prémio simples
 
-        chaveMedio = ChaveCifra(21, 107);
+        chaveMedio = ChaveCifra(MEDIUM_KEY_BITS, 107);
         byte[] chaveMedioGerada = gerarChave(chaveMedio);
         keys.add(chaveMedioGerada);
         // utilizar a chaveMedioGerada para o prémio médio
 
-        chaveRaro = ChaveCifra(22, 106);
+        chaveRaro = ChaveCifra(RARE_KEY_BITS, 106);
         byte[] chaveRaroGerada = gerarChave(chaveRaro);
         keys.add(chaveRaroGerada);
         // utilizar a chaveRaroGerada para o prémio raro
 
-        chaveLendario = ChaveCifra(23, 105);
+        chaveLendario = ChaveCifra(LEGENDARY_KEY_BITS, 105);
         byte[] chaveLendarioGerada = gerarChave(chaveLendario);
         keys.add(chaveLendarioGerada);
         // utilizar a chaveLendarioGerada para o prémio lendário
