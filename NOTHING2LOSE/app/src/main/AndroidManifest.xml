@@ -31,6 +31,8 @@
         <activity android:name=".RegisterActivity" />
 
         <activity android:name=".GameActivity" />
+
+
     </application>
 
 </manifest>
