@@ -32,10 +32,15 @@ public class GameActivity extends AppCompatActivity {
     List<byte[]> hmacs;
     SecretKey HMACkey;
 
+    String hmac_choice;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.game);
+
+        Bundle extras = getIntent().getExtras();
+        hmac_choice = extras.getString("HMAC");
 
         ButtonAwardA = (Button) findViewById(R.id.awardA);
         ButtonAwardB = (Button) findViewById(R.id.awardB);
@@ -65,11 +70,20 @@ public class GameActivity extends AppCompatActivity {
         Log.d("MyApp", "Chave para o HMAC: " + Base64.getEncoder().encodeToString(HMACkey.getEncoded()));
 
         // Calcula HMAC para cada award
-        CalculateHMAC calculateHMAC = new CalculateHMAC();
-        hmacs = calculateHMAC.calcHMAC(HMACkey, awards);
-        for (byte[] hmac : hmacs){
-            String hmacString = CalculateHMAC.byteArrayToHexString(hmac);
-            Log.d("MyApp", hmacString);
+        if (hmac_choice.equals("HMAC256")){
+            CalculateHMAC calculateHMAC = new CalculateHMAC();
+            hmacs = calculateHMAC.calcHMAC(HMACkey, awards);
+            for (byte[] hmac : hmacs){
+                String hmacString = CalculateHMAC.byteArrayToHexString(hmac);
+                Log.d("MyApp", hmacString);
+            }
+        } else if (hmac_choice.equals("HMAC512")) {
+            CalculateHMAC512 calculateHMAC512 = new CalculateHMAC512();
+            hmacs = calculateHMAC512.calcHMAC(HMACkey, awards);
+            for (byte[] hmac : hmacs){
+                String hmacString = CalculateHMAC512.byteArrayToHexString(hmac);
+                Log.d("MyApp", hmacString);
+            }
         }
     }
 
@@ -122,7 +136,11 @@ public class GameActivity extends AppCompatActivity {
 
         Log.d("MyApp", "Escolheu o award: " + awards.get(randomNumber));
         Log.d("MyApp", "Chave usada para cifrar: " + KeyGen.byteArrayToHexString(keys.get(randomNumber)));
-        Log.d("MyApp", "HMAC: " + CalculateHMAC.byteArrayToHexString(hmacs.get(randomNumber)));
+        if (hmac_choice.equals("HMAC256")){
+            Log.d("MyApp", "HMAC: " + CalculateHMAC.byteArrayToHexString(hmacs.get(randomNumber)));
+        } else if (hmac_choice.equals("HMAC512")) {
+            Log.d("MyApp", "HMAC: " + CalculateHMAC512.byteArrayToHexString(hmacs.get(randomNumber)));
+        }
     }
 
     public void AwardBChoosen(View v){
@@ -133,7 +151,11 @@ public class GameActivity extends AppCompatActivity {
 
         Log.d("MyApp", "Escolheu o award: " + awards.get(randomNumber));
         Log.d("MyApp", "Chave usada para cifrar: " + KeyGen.byteArrayToHexString(keys.get(randomNumber)));
-        Log.d("MyApp", "HMAC: " + CalculateHMAC.byteArrayToHexString(hmacs.get(randomNumber)));
+        if (hmac_choice.equals("HMAC256")){
+            Log.d("MyApp", "HMAC: " + CalculateHMAC.byteArrayToHexString(hmacs.get(randomNumber)));
+        } else if (hmac_choice.equals("HMAC512")) {
+            Log.d("MyApp", "HMAC: " + CalculateHMAC512.byteArrayToHexString(hmacs.get(randomNumber)));
+        }
     }
 
     public void AwardCChoosen(View v){
@@ -144,7 +166,11 @@ public class GameActivity extends AppCompatActivity {
 
         Log.d("MyApp", "Escolheu o award: " + awards.get(randomNumber));
         Log.d("MyApp", "Chave usada para cifrar: " + KeyGen.byteArrayToHexString(keys.get(randomNumber)));
-        Log.d("MyApp", "HMAC: " + CalculateHMAC.byteArrayToHexString(hmacs.get(randomNumber)));
+        if (hmac_choice.equals("HMAC256")){
+            Log.d("MyApp", "HMAC: " + CalculateHMAC.byteArrayToHexString(hmacs.get(randomNumber)));
+        } else if (hmac_choice.equals("HMAC512")) {
+            Log.d("MyApp", "HMAC: " + CalculateHMAC512.byteArrayToHexString(hmacs.get(randomNumber)));
+        }
     }
 
     public void AwardDChoosen(View v){
@@ -155,7 +181,11 @@ public class GameActivity extends AppCompatActivity {
 
         Log.d("MyApp", "Escolheu o award: " + awards.get(randomNumber));
         Log.d("MyApp", "Chave usada para cifrar: " + KeyGen.byteArrayToHexString(keys.get(randomNumber)));
-        Log.d("MyApp", "HMAC: " + CalculateHMAC.byteArrayToHexString(hmacs.get(randomNumber)));
+        if (hmac_choice.equals("HMAC256")){
+            Log.d("MyApp", "HMAC: " + CalculateHMAC.byteArrayToHexString(hmacs.get(randomNumber)));
+        } else if (hmac_choice.equals("HMAC512")) {
+            Log.d("MyApp", "HMAC: " + CalculateHMAC512.byteArrayToHexString(hmacs.get(randomNumber)));
+        }
     }
 
     public void onLogoutClicked(View v){
