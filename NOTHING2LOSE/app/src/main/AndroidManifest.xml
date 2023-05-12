@@ -31,6 +31,8 @@
         <activity android:name=".RegisterActivity" />
 
         <activity android:name=".GameActivity" />
+
+        <activity android:name=".hmac_choice" />
     </application>
 
 </manifest>
