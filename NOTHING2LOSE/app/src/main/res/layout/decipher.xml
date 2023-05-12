@@ -1,26 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="16dp">
 
 
     <TextView
         android:id="@+id/titleText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_constraintEnd_toEndOf="parent"
-        android:layout_constraintStart_toStartOf="parent"
-        android:layout_constraintTop_toTopOf="parent"
         android:layout_gravity="center_horizontal"
         android:text="Deciphering..."
         android:textColor="@color/black"
-        android:textSize="34sp"
-        app:layout_constraintBottom_toTopOf="@+id/congratulations"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:textSize="34sp" />
 
     <Button
         android:id="@+id/cancel_button"
@@ -28,11 +23,7 @@
         android:layout_height="wrap_content"
         android:backgroundTint="@color/gray"
         android:onClick="Cancel"
-        android:text="Cancel"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/congratulations" />
+        android:text="Cancel" />
 
     <TextView
         android:id="@+id/congratulations"
@@ -42,28 +33,18 @@
         android:text="congratulations"
         android:textColor="#00FF00"
         android:textSize="34sp"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.609" />
+        android:visibility="invisible" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/logoutButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="end|bottom"
-        android:onClick="onLogoutClicked"
+        android:layout_marginTop="70sp"
         android:textAllCaps="true"
         app:backgroundTint="@color/gray"
         app:icon="@drawable/icon_logout"
         app:iconGravity="textStart"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.95"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cancel_button"
-        app:layout_constraintVertical_bias="0.638" />
+        android:layout_gravity="end|bottom"
+        android:onClick="onLogoutClicked"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>
