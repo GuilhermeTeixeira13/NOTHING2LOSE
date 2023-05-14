@@ -22,61 +22,80 @@ import android.widget.Button;
 
 public class GameActivity extends AppCompatActivity {
 
-    Button ButtonAwardA;
-    Button ButtonAwardB;
-    Button ButtonAwardC;
-    Button ButtonAwardD;
+    Button AwardABtn;
+    Button AwardBBtn;
+    Button AwardCBtn;
+    Button AwardDBtn;
 
     ArrayList<Award> awards;
-    List<byte[]> keys;
+    List<byte[]> encKeys;
     List<byte[]> hmacs;
-    SecretKey HMACkey;
+    List<byte[]> enc_awards;;
+    SecretKey keyHmac;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.game);
 
-        ButtonAwardA = (Button) findViewById(R.id.awardA);
-        ButtonAwardB = (Button) findViewById(R.id.awardB);
-        ButtonAwardC = (Button) findViewById(R.id.awardC);
-        ButtonAwardD = (Button) findViewById(R.id.awardD);
+        // Find the award buttons in the layout.
+        AwardABtn = (Button) findViewById(R.id.awardA);
+        AwardBBtn = (Button) findViewById(R.id.awardB);
+        AwardCBtn = (Button) findViewById(R.id.awardC);
+        AwardDBtn = (Button) findViewById(R.id.awardD);
 
-        Log.d("MyApp", "App started.");
+        Log.d("MyApp", "App started."); // Log that the app has started.
 
+        // Initialize variables for the awards.
         double lambda = 5;
         double minPrize = 0.0;
         double maxPrize = 1000.0;
 
-        // Ordenados do menor para o maior prémio
+        // Generate a list of awards.
         awards = createAwards(lambda, minPrize, maxPrize);
-        Log.d("MyApp", "Awards sorted: " + awards.toString());
+        Log.d("MyApp", "Awards sorted: " + awards.toString()); // Log the sorted list of awards.
 
-        // Calculam-se as chaves, ordenadas da menos complexa à mais complexa
+        // Generate encryption keys using KeyGen class.
         KeyGen keyAlgorithm = new KeyGen();
-        keys = keyAlgorithm.generateKeys();
-        for(byte[] key : keys) {
+        encKeys = keyAlgorithm.generateKeys();
+
+        // Log the encryption keys.
+        for (byte[] key : encKeys) {
             String keyString = KeyGen.byteArrayToHexString(key);
-            Log.d("MyApp", keyString);
+            Log.d("MyApp", "ENC KEY = " + keyString);
         }
 
-        // Calcula uma key para o HMAC
-        SecretKey HMACkey = generateSecretKey();
-        Log.d("MyApp", "Chave para o HMAC: " + Base64.getEncoder().encodeToString(HMACkey.getEncoded()));
+        // Generate a secret key for HMAC.
+        keyHmac = generateSecretKey();
 
-        // Calcula HMAC para cada award
-        CalculateHMAC calculateHMAC = new CalculateHMAC();
-        hmacs = calculateHMAC.calcHMAC(HMACkey, awards);
-        for (byte[] hmac : hmacs){
-            String hmacString = CalculateHMAC.byteArrayToHexString(hmac);
-            Log.d("MyApp", hmacString);
+        // Log the HMAC key.
+        Log.d("MyApp", "HMAC KEY = " + Base64.getEncoder().encodeToString(keyHmac.getEncoded()));
+
+        hmacs = new ArrayList<>();
+        // Generate an HMAC for each award and add it to a list of HMACs.
+        for (Award award : awards) {
+            byte[] hmac = HMAC.calculateHMAC(keyHmac, award);
+            hmacs.add(hmac);
+            String hmacString = HMAC.byteArrayToHexString(hmac);
+            Log.d("MyApp", "HMAC = " + hmacString);
+        }
+
+        enc_awards = new ArrayList<>();
+        // Encrypt each award using a different encryption key and add it to a list of encrypted awards.
+        for (int i = 0; i < 4; i++) {
+            try {
+                byte[] encAward = EncryptDecrypt.encryptAward(encKeys.get(i), awards.get(i));
+                Log.d("MyApp", "AWARD CYPHER = " + Base64.getEncoder().encodeToString(encAward)); // Log the encrypted award.
+                enc_awards.add(encAward);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
     public static SecretKey generateSecretKey() {
         SecretKey secretKey = null;
         try {
-            // Generate a key to use in hmac
             KeyGenerator keyGen = KeyGenerator.getInstance("HmacSHA256");
             keyGen.init(256);
             secretKey = keyGen.generateKey();
@@ -94,25 +113,16 @@ public class GameActivity extends AppCompatActivity {
 
     public ArrayList<Award> createAwards(double lambda, double minPrize, double maxPrize) {
         ArrayList<Award> awards = new ArrayList<>();
-        ArrayList<Integer> prizes = new ArrayList<>();
         int category = 1;
 
         for (int i = 0; i < 4; i++) {
             int prize = (int) generateRandomPrize(lambda, minPrize, maxPrize);
-            prizes.add(prize);
-        }
-
-        Collections.sort(prizes);
-
-        for (int prize : prizes) {
-            Award award = new Award(prize, category);
-            awards.add(award);
+            awards.add(new Award(prize, category));
             category++;
         }
 
         return awards;
     }
-
 
     public void AwardAChoosen(View v) {
         Log.d("MyApp", "Clicked on A award.");
@@ -120,9 +130,19 @@ public class GameActivity extends AppCompatActivity {
         Random random = new Random();
         int randomNumber = random.nextInt(4);
 
-        Log.d("MyApp", "Escolheu o award: " + awards.get(randomNumber));
-        Log.d("MyApp", "Chave usada para cifrar: " + KeyGen.byteArrayToHexString(keys.get(randomNumber)));
-        Log.d("MyApp", "HMAC: " + CalculateHMAC.byteArrayToHexString(hmacs.get(randomNumber)));
+        Award award = awards.get(randomNumber);
+        byte [] encKey = encKeys.get(randomNumber);
+        byte [] hmac = hmacs.get(randomNumber);
+        byte [] encAward = enc_awards.get(randomNumber);
+
+        Log.d("MyApp", "CHOOSED AWARD: " + award);
+        Log.d("MyApp", "ENC KEY: " + KeyGen.byteArrayToHexString(encKey));
+        Log.d("MyApp", "HMAC: " + HMAC.byteArrayToHexString(hmac));
+        Log.d("MyApp", "CIPHER: " + Base64.getEncoder().encodeToString(encAward));
+
+        AwardABtn.setVisibility(View.INVISIBLE);
+
+        goToDecipher(hmac, keyHmac, encAward);
     }
 
     public void AwardBChoosen(View v){
@@ -131,9 +151,19 @@ public class GameActivity extends AppCompatActivity {
         Random random = new Random();
         int randomNumber = random.nextInt(4);
 
-        Log.d("MyApp", "Escolheu o award: " + awards.get(randomNumber));
-        Log.d("MyApp", "Chave usada para cifrar: " + KeyGen.byteArrayToHexString(keys.get(randomNumber)));
-        Log.d("MyApp", "HMAC: " + CalculateHMAC.byteArrayToHexString(hmacs.get(randomNumber)));
+        Award award = awards.get(randomNumber);
+        byte [] encKey = encKeys.get(randomNumber);
+        byte [] hmac = hmacs.get(randomNumber);
+        byte [] encAward = enc_awards.get(randomNumber);
+
+        Log.d("MyApp", "CHOOSED AWARD: " + award);
+        Log.d("MyApp", "ENC KEY: " + KeyGen.byteArrayToHexString(encKey));
+        Log.d("MyApp", "HMAC: " + HMAC.byteArrayToHexString(hmac));
+        Log.d("MyApp", "CIPHER: " + Base64.getEncoder().encodeToString(encAward));
+
+        AwardBBtn.setVisibility(View.INVISIBLE);
+
+        goToDecipher(hmac, keyHmac, encAward);
     }
 
     public void AwardCChoosen(View v){
@@ -142,9 +172,19 @@ public class GameActivity extends AppCompatActivity {
         Random random = new Random();
         int randomNumber = random.nextInt(4);
 
-        Log.d("MyApp", "Escolheu o award: " + awards.get(randomNumber));
-        Log.d("MyApp", "Chave usada para cifrar: " + KeyGen.byteArrayToHexString(keys.get(randomNumber)));
-        Log.d("MyApp", "HMAC: " + CalculateHMAC.byteArrayToHexString(hmacs.get(randomNumber)));
+        Award award = awards.get(randomNumber);
+        byte [] encKey = encKeys.get(randomNumber);
+        byte [] hmac = hmacs.get(randomNumber);
+        byte [] encAward = enc_awards.get(randomNumber);
+
+        Log.d("MyApp", "CHOOSED AWARD: " + award);
+        Log.d("MyApp", "ENC KEY: " + KeyGen.byteArrayToHexString(encKey));
+        Log.d("MyApp", "HMAC: " + HMAC.byteArrayToHexString(hmac));
+        Log.d("MyApp", "CIPHER: " + Base64.getEncoder().encodeToString(encAward));
+
+        AwardCBtn.setVisibility(View.INVISIBLE);
+
+        goToDecipher(hmac, keyHmac, encAward);
     }
 
     public void AwardDChoosen(View v){
@@ -153,9 +193,28 @@ public class GameActivity extends AppCompatActivity {
         Random random = new Random();
         int randomNumber = random.nextInt(4);
 
-        Log.d("MyApp", "Escolheu o award: " + awards.get(randomNumber));
-        Log.d("MyApp", "Chave usada para cifrar: " + KeyGen.byteArrayToHexString(keys.get(randomNumber)));
-        Log.d("MyApp", "HMAC: " + CalculateHMAC.byteArrayToHexString(hmacs.get(randomNumber)));
+        Award award = awards.get(randomNumber);
+        byte [] encKey = encKeys.get(randomNumber);
+        byte [] hmac = hmacs.get(randomNumber);
+        byte [] encAward = enc_awards.get(randomNumber);
+
+        Log.d("MyApp", "CHOOSED AWARD: " + award);
+        Log.d("MyApp", "ENC KEY: " + KeyGen.byteArrayToHexString(encKey));
+        Log.d("MyApp", "HMAC: " + HMAC.byteArrayToHexString(hmac));
+        Log.d("MyApp", "CIPHER: " + Base64.getEncoder().encodeToString(encAward));
+
+        AwardDBtn.setVisibility(View.INVISIBLE);
+
+        goToDecipher(hmac, keyHmac, encAward);
+    }
+
+    public void goToDecipher (byte[] hmac, SecretKey hmacKey, byte[] encAward) {
+        Intent goToDecryptIntent = new Intent(this, DecryptActivity.class);
+        goToDecryptIntent.putExtra("flag","FROM_GAME");
+        goToDecryptIntent.putExtra("HMAC", hmac);
+        goToDecryptIntent.putExtra("HMAC_KEY", hmacKey);
+        goToDecryptIntent.putExtra("ENC_AWARD", encAward);
+        startActivity(goToDecryptIntent);
     }
 
     public void onLogoutClicked(View v){
