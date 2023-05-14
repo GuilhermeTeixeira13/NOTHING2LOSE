@@ -1,84 +1,66 @@
 package pt.ubi.di.pmd.nothing2lose;
 
+
+import android.util.Log;
+
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 
 public class KeyGen {
-    private static final int SIMPLE_KEY_BITS = 20;
-    private static final int MEDIUM_KEY_BITS = 21;
-    private static final int RARE_KEY_BITS = 22;
-    private static final int LEGENDARY_KEY_BITS = 23;
-    private int tamanhoChave;
-    private int tamanhoAleatorio;
-    private byte[] chave;
-    private byte[] chaveSimples;
-    private byte[] chaveMedia;
-    private byte[] chaveRara;
-    private byte[] chaveLendaria;
+    public List<byte []> generateKeys() {
+        List<byte []> keys = new ArrayList<>();
 
-    public byte[] ChaveCifra(int tamanhoAleatorio, int tamanhoZeros) {
-        this.tamanhoAleatorio = tamanhoAleatorio;
-        this.tamanhoChave = tamanhoAleatorio + tamanhoZeros;
-        this.chave = new byte[tamanhoChave / 8];
-        return this.chave;
-    }
+        int simplePremiumBits = 20;
+        int avgPrizeBits = 21;
+        int rarePremiumBits = 22;
+        int legendaryPremiumBits = 23;
 
-    public byte[] gerarChave(byte[] chave) {
-        SecureRandom random = new SecureRandom();
-        byte[] aleatorio = new byte[tamanhoAleatorio / 8];
-        random.nextBytes(aleatorio);
-        System.arraycopy(aleatorio, 0, chave, 0, aleatorio.length);
-        return chave;
-    }
+        byte[] simplePremiumKey = createKey(128, simplePremiumBits);
 
-    public List<byte[]> generateKeys() {
-        SecureRandom random = new SecureRandom();
-        List<byte[]> keys = new ArrayList<>();
+        byte[] avgPrizeKey = createKey(128, avgPrizeBits);
 
-        // Gerar chave Simples
-        chaveSimples = ChaveCifra(SIMPLE_KEY_BITS, 108);
-        byte[] chaveSimplesGerada = gerarChave(chaveSimples);
-        keys.add(chaveSimplesGerada);
+        byte[] rarePremiumKey = createKey(128, rarePremiumBits);
 
-        // Gerar chave Media
-        chaveMedia = ChaveCifra(MEDIUM_KEY_BITS, 107);
-        byte[] chaveMedioGerada = gerarChave(chaveMedia);
-        keys.add(chaveMedioGerada);
+        byte[] legendaryPremiumKey = createKey(128, legendaryPremiumBits);
 
-        // Gerar chave Rara
-        chaveRara = ChaveCifra(RARE_KEY_BITS, 106);
-        byte[] chaveRaroGerada = gerarChave(chaveRara);
-        keys.add(chaveRaroGerada);
-
-        // Gerar chave Lendaria
-        chaveLendaria = ChaveCifra(LEGENDARY_KEY_BITS, 105);
-        byte[] chaveLendarioGerada = gerarChave(chaveLendaria);
-        keys.add(chaveLendarioGerada);
-
-
+        keys.add(simplePremiumKey);
+        keys.add(avgPrizeKey);
+        keys.add(rarePremiumKey);
+        keys.add(legendaryPremiumKey);
 
         return keys;
     }
 
+    public static byte[] createKey(int keySize, int randomSize) {
+        byte[] key = new byte[keySize/8]; // Create a byte array for the key
+        SecureRandom random = new SecureRandom(); // Create a secure random number generator
 
+        // Fill the first x bits with random data
+        int randomBytes = randomSize/8;
+        byte[] randomData = new byte[randomBytes];
+        random.nextBytes(randomData);
+        System.arraycopy(randomData, 0, key, 0, randomBytes);
+
+        // Set the remaining bits to 0
+        for (int i = randomBytes; i < key.length; i++) {
+            key[i] = 0;
+        }
+
+        return key; // Return the generated key
+    }
+
+    private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
 
     public static String byteArrayToHexString(byte[] bytes) {
-        StringBuilder sb = new StringBuilder();
-        for (byte b : bytes) {
-            sb.append(String.format("%02X", b));
+        char[] hexChars = new char[bytes.length * 2];
+        for (int i = 0; i < bytes.length; i++) {
+            int v = bytes[i] & 0xFF;
+            hexChars[i * 2] = HEX_ARRAY[v >>> 4];
+            hexChars[i * 2 + 1] = HEX_ARRAY[v & 0x0F];
         }
-        return sb.toString();
-    }
-
-    public byte[] hexStringToByteArray(String hexString) {
-        int length = hexString.length();
-        byte[] byteArray = new byte[length / 2];
-        for (int i = 0; i < length; i += 2) {
-            byteArray[i / 2] = (byte) ((Character.digit(hexString.charAt(i), 16) << 4)
-                    + Character.digit(hexString.charAt(i + 1), 16));
-        }
-        return byteArray;
+        return new String(hexChars);
     }
 }
+
 

@@ -73,10 +73,14 @@ public class DecryptActivity extends AppCompatActivity {
             Award DecryptedAward = null;
             byte[] key = new byte[16];
 
-            for (int i = 0; i < (1 << 23); i++) {
-                for (int j = 0; j < 3; j++) {
+            long startTime = System.currentTimeMillis();
+
+            for (int i = 0; i < (1 << 30); i++) {
+                for (int j = 0; j < 4; j++) {
                     key[j] = (byte) ((i >> (j * 8)) & 0xFF);
                 }
+
+                //Log.d("MyApp", "key = " + KeyGen.bytesToHex(key));
 
                 if (isCancelled()) {
                     return null; // terminate the task
@@ -91,16 +95,21 @@ public class DecryptActivity extends AppCompatActivity {
             }
 
             if (isCancelled()) {
-                return null; // terminate the task
+                return null;
             }
+
+            long endTime = System.currentTimeMillis();
+            long elapsedTime = endTime - startTime;
+
+            Log.d("MyApp", "Decryption time: " + elapsedTime / 1000 + " seconds");
 
             byte[] hmacNew = HMAC.calculateHMAC(hmacKey, DecryptedAward);
 
             if (Arrays.equals(hmac, hmacNew)) {
-                Log.d("MyApp", "HMAC's match");
-                Log.d("MyApp", "Decrypted Award: " + DecryptedAward);
+                Log.d("MyApp", "SUCCESS! HMAC's match.");
+                Log.d("MyApp", "SUCCESS! Decrypted Award: " + DecryptedAward);
             } else {
-                Log.d("MyApp", "HMAC's do not match");
+                Log.d("MyApp", "HMAC's do not match.");
             }
 
             return DecryptedAward;
@@ -109,7 +118,6 @@ public class DecryptActivity extends AppCompatActivity {
 
         protected void onPostExecute(Award decryptedAward) {
             super.onPostExecute(decryptedAward);
-            // TODO: Update UI with decryptedAward
             ButtonCancel.setVisibility(View.INVISIBLE);
             txtFieldtitle.setText(String.valueOf(decryptedAward.getPrice()));
         }
