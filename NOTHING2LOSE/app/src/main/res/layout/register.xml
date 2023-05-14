@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical"
+    android:background="@color/light_gray"
     android:padding="16dp">
 
     <TextView
@@ -24,6 +25,7 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/interbold"
         android:text="Welcome!"
+        android:textColor="@color/black"
         android:textSize="24sp" />
 
     <com.google.android.material.textfield.TextInputLayout
@@ -33,13 +35,15 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         app:boxStrokeColor="@color/purple_200"
-        app:hintTextColor="@color/black">
+        app:hintTextColor="@color/black"
+        android:textColorHint="@color/black">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/editTextEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="E-mail" />
+            android:hint="E-mail"
+            android:textColor="@color/black"/>
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -53,14 +57,16 @@
         android:layout_marginTop="16dp"
         app:endIconMode="password_toggle"
         app:boxStrokeColor="@color/purple_200"
-        app:hintTextColor="@color/black">
+        app:hintTextColor="@color/black"
+        android:textColorHint="@color/black">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/editTextPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Password"
-            android:inputType="textPassword" />
+            android:inputType="textPassword"
+            android:textColor="@color/black"/>
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -74,14 +80,16 @@
         android:layout_marginTop="16dp"
         app:endIconMode="password_toggle"
         app:boxStrokeColor="@color/purple_200"
-        app:hintTextColor="@color/black">
+        app:hintTextColor="@color/black"
+        android:textColorHint="@color/black">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/editTextPasswordRepeat"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Repeat password"
-            android:inputType="textPassword" />
+            android:inputType="textPassword"
+            android:textColor="@color/black"/>
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -104,6 +112,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20sp"
         android:text="Already created an account? Login "
+        android:textColor="@color/black"
         />
 
     <TextView

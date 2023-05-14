@@ -15,8 +15,10 @@ import javax.crypto.SecretKey;
 
 
 public class DecryptActivity extends AppCompatActivity {
-    Button ButtonCancel;
-    TextView txtFieldtitle;
+    Button cancelBtn;
+    Button playAgainBtn;
+    TextView titleTxt;
+    TextView congratzTxt;
 
     byte[] hmac;
     SecretKey hmacKey;
@@ -30,8 +32,12 @@ public class DecryptActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.decrypt);
 
-        ButtonCancel = (Button) findViewById(R.id.cancel_button);
-        txtFieldtitle = (TextView) findViewById(R.id.titleText);
+        cancelBtn = (Button) findViewById(R.id.cancel_button);
+        playAgainBtn = (Button) findViewById(R.id.play_again_button);
+        playAgainBtn.setVisibility(View.INVISIBLE);
+        titleTxt = (TextView) findViewById(R.id.titleText);
+        congratzTxt = (TextView) findViewById(R.id.congratulations);
+        congratzTxt.setVisibility(View.INVISIBLE);
 
         // Getting the flag from the intent that he came from
         Intent intent = getIntent();
@@ -50,16 +56,13 @@ public class DecryptActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        if (decryptionTask != null && decryptionTask.getStatus() == AsyncTask.Status.RUNNING) {
-            Log.d("MyApp", "STOPPED");
-            decryptionTask.cancel(true);
-            return;
-        }
+
     }
 
     public void CancelButtonClicked(View v) {
         super.onBackPressed();
+
+        // Stop decryption task
         if (decryptionTask != null && decryptionTask.getStatus() == AsyncTask.Status.RUNNING) {
             Log.d("MyApp", "STOPPED");
             decryptionTask.cancel(true);
@@ -76,11 +79,12 @@ public class DecryptActivity extends AppCompatActivity {
             long startTime = System.currentTimeMillis();
 
             for (int i = 0; i < (1 << 30); i++) {
+
                 for (int j = 0; j < 4; j++) {
                     key[j] = (byte) ((i >> (j * 8)) & 0xFF);
                 }
 
-                //Log.d("MyApp", "key = " + KeyGen.bytesToHex(key));
+                // Log.d("MyApp", "key = " + KeyGen.bytesToHex(key));
 
                 if (isCancelled()) {
                     return null; // terminate the task
@@ -88,14 +92,12 @@ public class DecryptActivity extends AppCompatActivity {
 
                 try {
                     DecryptedAward = EncryptDecrypt.decryptAward(key, encAward);
+                    // Successful decryption
                     break;
                 } catch (Exception e) {
+                    // Decryption failed
                     continue;
                 }
-            }
-
-            if (isCancelled()) {
-                return null;
             }
 
             long endTime = System.currentTimeMillis();
@@ -118,19 +120,27 @@ public class DecryptActivity extends AppCompatActivity {
 
         protected void onPostExecute(Award decryptedAward) {
             super.onPostExecute(decryptedAward);
-            ButtonCancel.setVisibility(View.INVISIBLE);
-            txtFieldtitle.setText(String.valueOf(decryptedAward.getPrice()));
+            cancelBtn.setVisibility(View.INVISIBLE);
+            playAgainBtn.setVisibility(View.VISIBLE);
+            congratzTxt.setVisibility(View.VISIBLE);
+            titleTxt.setText("You won: " + String.valueOf(decryptedAward.getPrice()) + "$!");
         }
     }
 
     public void onLogoutClicked(View v){
         SharedPreferences preferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
+
         editor.remove("username");
         editor.remove("password");
         editor.apply();
 
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
+    }
+
+    public void PlayAgainButtonClicked (View v) {
+        Intent goToGameIntent = new Intent(this, GameActivity.class);
+        startActivity(goToGameIntent);
     }
 }

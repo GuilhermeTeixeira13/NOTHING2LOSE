@@ -1,50 +1,88 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
-    android:orientation="vertical"
-    android:padding="16dp">
-
-
+    android:background="@color/light_gray"
+    android:padding="16dp"
+    android:orientation="vertical">
     <TextView
         android:id="@+id/titleText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="250sp"
         android:layout_gravity="center_horizontal"
-        android:text="Deciphering..."
-        android:textColor="@color/black"
-        android:textSize="34sp" />
+        android:text="Decrypting..."
+        android:textSize="44sp"
+        android:textColor="@color/green"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/cancel_button"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:backgroundTint="@color/gray"
+        android:layout_height="56dp"
+        android:layout_marginStart="80sp"
+        android:layout_marginEnd="80sp"
+        android:layout_marginTop="40sp"
         android:onClick="CancelButtonClicked"
-        android:text="Cancel" />
+        android:text="Cancel"
+        android:textSize="18sp"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:background="@drawable/rounded_corners"
+        app:layout_constraintTop_toBottomOf="@+id/titleText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/play_again_button"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginStart="80sp"
+        android:layout_marginEnd="80sp"
+        android:layout_marginTop="40dp"
+        android:onClick="PlayAgainButtonClicked"
+        android:text="Play Again"
+        android:textSize="18sp"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:background="@drawable/rounded_corners"
+        app:layout_constraintTop_toBottomOf="@+id/titleText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
 
     <TextView
         android:id="@+id/congratulations"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:text="congratulations"
-        android:textColor="#00FF00"
-        android:textSize="34sp"
-        android:visibility="invisible" />
+        android:text="Congratulations!"
+        android:textColor="@color/green"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/titleText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    <com.google.android.material.button.MaterialButton
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/logoutButton"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="70sp"
+        android:layout_height="56dp"
+        android:text="Logout"
         android:textAllCaps="true"
-        app:backgroundTint="@color/gray"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:background="@drawable/rounded_corners"
         app:icon="@drawable/icon_logout"
         app:iconGravity="textStart"
-        android:layout_gravity="end|bottom"
-        android:onClick="onLogoutClicked"/>
-
-</LinearLayout>
+        android:onClick="onLogoutClicked"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>
