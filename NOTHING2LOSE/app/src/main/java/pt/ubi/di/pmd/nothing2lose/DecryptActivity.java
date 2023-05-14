@@ -1,5 +1,6 @@
 package pt.ubi.di.pmd.nothing2lose;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -63,6 +64,7 @@ public class DecryptActivity extends AppCompatActivity {
         if (decryptionTask != null && decryptionTask.getStatus() == AsyncTask.Status.RUNNING) {
             Log.d("MyApp", "STOPPED");
             decryptionTask.cancel(true);
+
             return;
         }
     }

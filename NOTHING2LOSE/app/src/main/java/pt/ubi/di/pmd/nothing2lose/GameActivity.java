@@ -13,8 +13,11 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
+
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -110,17 +113,19 @@ public class GameActivity extends AppCompatActivity {
 
     public ArrayList<Award> createAwards(double lambda, double minPrize, double maxPrize) {
         ArrayList<Award> awards = new ArrayList<>();
-        ArrayList<Integer> prizes = new ArrayList<>();
+        Set<Integer> prizes = new HashSet<Integer>();
         int category = 1;
 
-        for (int i = 0; i < 4; i++) {
+        // Avoid duplicated prizes
+        while (prizes.size() < 4) {
             int prize = (int) generateRandomPrize(lambda, minPrize, maxPrize);
             prizes.add(prize);
         }
+        ArrayList<Integer> prizeList = new ArrayList<Integer>(prizes);
 
-        Collections.sort(prizes);
+        Collections.sort(prizeList);
 
-        for (int prize : prizes) {
+        for (int prize : prizeList) {
             Award award = new Award(prize, category);
             awards.add(award);
             category++;
