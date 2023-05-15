@@ -128,11 +128,19 @@ public class GameActivity extends AppCompatActivity {
 
     public ArrayList<Award> createAwards(double lambda, double minPrize, double maxPrize) {
         ArrayList<Award> awards = new ArrayList<>();
+        ArrayList<Integer> prizes = new ArrayList<>();
         int category = 0;
 
         for (int i = 0; i < 4; i++) {
             int prize = (int) generateRandomPrize(lambda, minPrize, maxPrize);
-            awards.add(new Award(prize, category));
+            prizes.add(prize);
+        }
+
+        Collections.sort(prizes);
+
+        for (int prize : prizes) {
+            Award award = new Award(prize, category);
+            awards.add(award);
             category++;
         }
 
