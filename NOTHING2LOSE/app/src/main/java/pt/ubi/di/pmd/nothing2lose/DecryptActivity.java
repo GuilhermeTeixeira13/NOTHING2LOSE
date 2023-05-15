@@ -3,6 +3,7 @@ package pt.ubi.di.pmd.nothing2lose;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,6 +20,7 @@ public class DecryptActivity extends AppCompatActivity {
     Button playAgainBtn;
     TextView titleTxt;
     TextView congratzTxt;
+    TextView categoryTxt;
 
     byte[] hmac;
     SecretKey hmacKey;
@@ -38,6 +40,8 @@ public class DecryptActivity extends AppCompatActivity {
         titleTxt = (TextView) findViewById(R.id.titleText);
         congratzTxt = (TextView) findViewById(R.id.congratulations);
         congratzTxt.setVisibility(View.INVISIBLE);
+        categoryTxt = (TextView) findViewById(R.id.award_category);
+        categoryTxt.setVisibility(View.INVISIBLE);
 
         // Getting the flag from the intent that he came from
         Intent intent = getIntent();
@@ -121,9 +125,16 @@ public class DecryptActivity extends AppCompatActivity {
         protected void onPostExecute(Award decryptedAward) {
             super.onPostExecute(decryptedAward);
             cancelBtn.setVisibility(View.INVISIBLE);
+
             playAgainBtn.setVisibility(View.VISIBLE);
+
             congratzTxt.setVisibility(View.VISIBLE);
-            titleTxt.setText("You won: " + String.valueOf(decryptedAward.getPrice()) + "$!");
+
+            titleTxt.setText("You won: " + decryptedAward.getPrice() + "$!");
+
+            categoryTxt.setVisibility(View.VISIBLE);
+            categoryTxt.setText(String.valueOf(decryptedAward.getCategoryString()));
+            categoryTxt.setTextColor(Color.parseColor(decryptedAward.getCategoryColor()));
         }
     }
 

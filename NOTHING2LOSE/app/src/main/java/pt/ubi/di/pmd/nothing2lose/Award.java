@@ -6,7 +6,9 @@ import java.io.Serializable;
 
 public class Award implements Serializable {
     int price;
-    int category; // 0 -> Simple (30s) // 1 -> Medium (60s) // 2 -> Rare (120s) // 3 -> Legendary (240s)
+    int category;
+    String [] categoryStrings = {"Simple", "Medium", "Rare" , "Legendary!"};
+    String [] categoryColors = {"#F0FFFF", "#0000FF", "#FFD700" , "#FF4500"};
 
     public Award(int price, int category) {
         this.price = price;
@@ -17,16 +19,12 @@ public class Award implements Serializable {
         return price;
     }
 
-    public int getCategory() {
-        return category;
+    public String getCategoryString() {
+        return categoryStrings[this.category];
     }
 
-    public void setPrice(int price) {
-        this.price = price;
-    }
-
-    public void setCategory(int category) {
-        this.category = category;
+    public String getCategoryColor() {
+        return categoryColors[this.category];
     }
 
     @Override

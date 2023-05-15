@@ -128,7 +128,7 @@ public class GameActivity extends AppCompatActivity {
 
     public ArrayList<Award> createAwards(double lambda, double minPrize, double maxPrize) {
         ArrayList<Award> awards = new ArrayList<>();
-        int category = 1;
+        int category = 0;
 
         for (int i = 0; i < 4; i++) {
             int prize = (int) generateRandomPrize(lambda, minPrize, maxPrize);
@@ -195,7 +195,7 @@ public class GameActivity extends AppCompatActivity {
 
     public void AwardDChoosen(View v){
         Log.d("MyApp", "Clicked on D award.");
-        
+
         Award award = awards.get(listShuffled.get(3));
         byte [] encKey = encKeys.get(listShuffled.get(3));
         byte [] hmac = hmacs.get(listShuffled.get(3));
