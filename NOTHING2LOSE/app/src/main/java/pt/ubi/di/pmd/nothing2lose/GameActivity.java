@@ -13,8 +13,11 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
+
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -32,6 +35,8 @@ public class GameActivity extends AppCompatActivity {
     List<byte[]> hmacs;
     List<byte[]> enc_awards;;
     SecretKey keyHmac;
+
+    ArrayList<Integer> listShuffled;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +59,7 @@ public class GameActivity extends AppCompatActivity {
         // Generate a list of awards.
         awards = createAwards(lambda, minPrize, maxPrize);
         Log.d("MyApp", "Awards sorted: " + awards.toString()); // Log the sorted list of awards.
+
 
         // Generate encryption keys using KeyGen class.
         KeyGen keyAlgorithm = new KeyGen();
@@ -91,6 +97,16 @@ public class GameActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
+
+        // Generate a list of numbers [0,3] shuffled
+        // i = 0 -> A // i = 1 -> B // i = 2 -> C // i = 3 -> D
+        ArrayList<Integer> listShuffled = new ArrayList<Integer>();
+        listShuffled.add(0);
+        listShuffled.add(1);
+        listShuffled.add(2);
+        listShuffled.add(3);
+        Collections.shuffle(listShuffled);
+
     }
 
     public static SecretKey generateSecretKey() {
@@ -127,13 +143,10 @@ public class GameActivity extends AppCompatActivity {
     public void AwardAChoosen(View v) {
         Log.d("MyApp", "Clicked on A award.");
 
-        Random random = new Random();
-        int randomNumber = random.nextInt(4);
-
-        Award award = awards.get(randomNumber);
-        byte [] encKey = encKeys.get(randomNumber);
-        byte [] hmac = hmacs.get(randomNumber);
-        byte [] encAward = enc_awards.get(randomNumber);
+        Award award = awards.get(listShuffled.get(0));
+        byte [] encKey = encKeys.get(listShuffled.get(0));
+        byte [] hmac = hmacs.get(listShuffled.get(0));
+        byte [] encAward = enc_awards.get(listShuffled.get(0));
 
         Log.d("MyApp", "CHOOSED AWARD: " + award);
         Log.d("MyApp", "ENC KEY: " + KeyGen.byteArrayToHexString(encKey));
@@ -148,13 +161,11 @@ public class GameActivity extends AppCompatActivity {
     public void AwardBChoosen(View v){
         Log.d("MyApp", "Clicked on B award.");
 
-        Random random = new Random();
-        int randomNumber = random.nextInt(4);
 
-        Award award = awards.get(randomNumber);
-        byte [] encKey = encKeys.get(randomNumber);
-        byte [] hmac = hmacs.get(randomNumber);
-        byte [] encAward = enc_awards.get(randomNumber);
+        Award award = awards.get(listShuffled.get(1));
+        byte [] encKey = encKeys.get(listShuffled.get(1));
+        byte [] hmac = hmacs.get(listShuffled.get(1));
+        byte [] encAward = enc_awards.get(listShuffled.get(1));
 
         Log.d("MyApp", "CHOOSED AWARD: " + award);
         Log.d("MyApp", "ENC KEY: " + KeyGen.byteArrayToHexString(encKey));
@@ -169,13 +180,11 @@ public class GameActivity extends AppCompatActivity {
     public void AwardCChoosen(View v){
         Log.d("MyApp", "Clicked on C award.");
 
-        Random random = new Random();
-        int randomNumber = random.nextInt(4);
 
-        Award award = awards.get(randomNumber);
-        byte [] encKey = encKeys.get(randomNumber);
-        byte [] hmac = hmacs.get(randomNumber);
-        byte [] encAward = enc_awards.get(randomNumber);
+        Award award = awards.get(listShuffled.get(2));
+        byte [] encKey = encKeys.get(listShuffled.get(2));
+        byte [] hmac = hmacs.get(listShuffled.get(2));
+        byte [] encAward = enc_awards.get(listShuffled.get(2));
 
         Log.d("MyApp", "CHOOSED AWARD: " + award);
         Log.d("MyApp", "ENC KEY: " + KeyGen.byteArrayToHexString(encKey));
@@ -190,13 +199,11 @@ public class GameActivity extends AppCompatActivity {
     public void AwardDChoosen(View v){
         Log.d("MyApp", "Clicked on D award.");
 
-        Random random = new Random();
-        int randomNumber = random.nextInt(4);
 
-        Award award = awards.get(randomNumber);
-        byte [] encKey = encKeys.get(randomNumber);
-        byte [] hmac = hmacs.get(randomNumber);
-        byte [] encAward = enc_awards.get(randomNumber);
+        Award award = awards.get(listShuffled.get(3));
+        byte [] encKey = encKeys.get(listShuffled.get(3));
+        byte [] hmac = hmacs.get(listShuffled.get(3));
+        byte [] encAward = enc_awards.get(listShuffled.get(3));
 
         Log.d("MyApp", "CHOOSED AWARD: " + award);
         Log.d("MyApp", "ENC KEY: " + KeyGen.byteArrayToHexString(encKey));
