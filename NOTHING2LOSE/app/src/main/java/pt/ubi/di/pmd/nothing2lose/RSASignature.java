@@ -8,31 +8,33 @@ import java.security.Signature;
 import java.security.spec.PKCS8EncodedKeySpec;
 
 public class RSASignature {
+        /**
+         * Generates a digital signature for the given data using the provided private key.
+         *
+         * @param data              The data to be signed.
+         * @param privateKeyBase64  The private key in Base64 format.
+         * @return                  The generated digital signature as an array of bytes.
+         * @throws Exception        If an error occurs during the signature generation process.
+         */
+        public byte[] generateDigitalSignature(String data, String privateKeyBase64) throws Exception {
+            byte[] privateKeyBytes = Base64.getDecoder().decode(privateKeyBase64);
 
-    public byte[] generateDigitalSignature(String data, String privateKeyBase64) throws Exception {
-        // Decodifica a chave privada de Base64 para bytes
-        byte[] privateKeyBytes = Base64.getDecoder().decode(privateKeyBase64);
+            PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(privateKeyBytes);
+            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+            PrivateKey privateKey = keyFactory.generatePrivate(keySpec);
 
-        // Cria uma instância da chave privada a partir dos bytes
-        PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(privateKeyBytes);
-        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-        PrivateKey privateKey = keyFactory.generatePrivate(keySpec);
+            byte[] dataBytes = data.getBytes();
 
-        // Dados a serem assinados
-        byte[] dataBytes = data.getBytes();
+            Signature signature = Signature.getInstance("SHA256withRSA");
 
-        // Criação de uma instância do objeto Signature para assinatura digital
-        Signature signature = Signature.getInstance("SHA256withRSA");
+            signature.initSign(privateKey);
 
-        // Inicializa o objeto Signature com a chave privada
-        signature.initSign(privateKey);
+            signature.update(dataBytes);
 
-        // Adiciona os dados para assinatura
-        signature.update(dataBytes);
+            byte[] digitalSignature = signature.sign();
 
-        // Gera a assinatura digital
-        byte[] digitalSignature = signature.sign();
-
-        return digitalSignature;
-    }
+            return digitalSignature;
+        }
 }
+
+

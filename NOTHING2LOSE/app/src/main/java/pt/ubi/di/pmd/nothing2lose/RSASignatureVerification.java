@@ -8,28 +8,39 @@ import java.util.Base64;
 
 public class RSASignatureVerification {
 
+    /**
+     * Verifies a digital signature using RSA.
+     *
+     * @param data              The original data as a string.
+     * @param publicKeyBase64   The public key in Base64 format.
+     * @param signatureBytes    The signature as an array of bytes.
+     * @return                  True if the signature is valid, false otherwise.
+     * @throws Exception        If an error occurs during the verification process.
+     */
     public boolean verifyDigitalSignature(String data, String publicKeyBase64, byte[] signatureBytes) throws Exception {
-        // Decodifica a chave pública e a assinatura de Base64 para bytes
-        byte[] publicKeyBytes = Base64.getDecoder().decode(publicKeyBase64);;
+        // Decode the public key and signature from Base64 to bytes
+        byte[] publicKeyBytes = Base64.getDecoder().decode(publicKeyBase64);
 
-        // Cria uma instância da chave pública a partir dos bytes
+        // Create an instance of the public key from the bytes
         X509EncodedKeySpec keySpec = new X509EncodedKeySpec(publicKeyBytes);
         KeyFactory keyFactory = KeyFactory.getInstance("RSA");
         PublicKey publicKey = keyFactory.generatePublic(keySpec);
 
-        // Criação de uma instância do objeto Signature para verificação da assinatura
+        // Create an instance of the Signature object for signature verification
         Signature signature = Signature.getInstance("SHA256withRSA");
 
-        // Inicializa o objeto Signature com a chave pública
+        // Initialize the Signature object with the public key
         signature.initVerify(publicKey);
 
-        // Adiciona os dados originais
+        // Add the original data
         byte[] dataBytes = data.getBytes();
         signature.update(dataBytes);
 
-        // Verifica a assinatura digital
+        // Verify the digital signature
         boolean signatureVerified = signature.verify(signatureBytes);
 
         return signatureVerified;
     }
+
 }
+

@@ -110,7 +110,7 @@ public class GameActivity extends AppCompatActivity {
         privateKeysList = new ArrayList<>();
         // Generate Signatures for each Prize, Order: key 1 -> award (category 1)
         for(int i = 0; i < 4; i++) {
-            RSAGeneration rsaG = new RSAGeneration();
+            RSAKeyPairGenerator rsaG = new RSAKeyPairGenerator();
             try {
                 KeyPair kp =  rsaG.generateKeyPair();
                 String publicKey = rsaG.getPublicKeyBase64(kp);
