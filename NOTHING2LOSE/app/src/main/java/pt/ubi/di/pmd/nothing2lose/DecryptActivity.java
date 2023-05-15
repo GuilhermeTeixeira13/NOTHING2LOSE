@@ -118,27 +118,29 @@ public class DecryptActivity extends AppCompatActivity {
             byte[] hmacNew = HMAC.calculateHMAC(hmacKey, DecryptedAward);
             if (Arrays.equals(hmac, hmacNew)) {
                 Log.d("MyApp", "SUCCESS! HMAC's match.");
-                Log.d("MyApp", "SUCCESS! Decrypted Award: " + DecryptedAward);
+
+                RSASignatureVerification rsaVerification = new RSASignatureVerification();
+
+                boolean verificationSignature = false;
+                try {
+                    verificationSignature = rsaVerification.verifyDigitalSignature(DecryptedAward.toString(), publicKey, signature);
+                } catch (Exception e) {
+                    Log.e("MyApp", e.toString());
+                }
+                if (verificationSignature) {
+                    Log.d("MyApp", "SUCCESS! Signature's match.");
+
+                    Log.d("MyApp", "SUCCESS! Decrypted Award: " + DecryptedAward);
+
+                    return DecryptedAward;
+                } else {
+                    Log.d("MyApp", "Signature's do not match.");
+                }
             } else {
                 Log.d("MyApp", "HMAC's do not match.");
             }
 
-            RSASignatureVerification rsaVerification = new RSASignatureVerification();
-
-            boolean verificationSignature = false;
-            try {
-                verificationSignature = rsaVerification.verifyDigitalSignature(DecryptedAward.toString(), publicKey, signature);
-            } catch (Exception e) {
-                Log.e("MyApp", e.toString());
-            }
-            if (verificationSignature) {
-                Log.d("MyApp", "SUCCESS! Signature's match.");
-            } else {
-                Log.d("MyApp", "Signature's do not match.");
-            }
-
-
-            return DecryptedAward;
+            return null;
         }
 
 
