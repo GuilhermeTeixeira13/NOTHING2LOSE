@@ -33,8 +33,13 @@ public class GameActivity extends AppCompatActivity {
     ArrayList<Award> awards;
     List<byte[]> encKeys;
     List<byte[]> hmacs;
-    List<byte[]> enc_awards;;
+    List<byte[]> enc_awards;
+
     SecretKey keyHmac;
+
+    List<byte[]> digitalSignaturesList;
+    List<String> publicKeysList;
+    List<String> privateKeysList;
 
     ArrayList<Integer> listShuffled;
 
@@ -97,6 +102,36 @@ public class GameActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
+
+        publicKeysList = new ArrayList<>();
+        privateKeysList = new ArrayList<>();
+        // Generate Signatures for each Prize, Order: key 1 -> award (category 1)
+        for(int i = 0; i < 4; i++) {
+            RSAGeneration rsaG = new RSAGeneration();
+            try {
+                String publicKey = rsaG.generatePublicKeyBase64();
+                String privateKey = rsaG.generatePrivateKeyBase64();
+                publicKeysList.add(publicKey);
+                privateKeysList.add(privateKey);
+            } catch (NoSuchAlgorithmException e) {
+                Log.e("MyApp", e.toString());
+            }
+        }
+        // Digital Signature
+        digitalSignaturesList = new ArrayList<>();
+        for (int i = 0; i < 4; i++) {
+            RSASignature rsaSign = new RSASignature();
+            try {
+                byte[] signature = rsaSign.generateDigitalSignature(awards.get(i).toString(), privateKeysList.get(i));
+                Log.d("MyApp", "AWARD SIGNATURE = " + Base64.getEncoder().encodeToString(signature)); // Log the encrypted award.
+                digitalSignaturesList.add(signature);
+            } catch (Exception e) {
+                Log.e("MyApp", e.toString());
+            }
+        }
+
+
+
 
         // Generate a list of numbers [0,3] shuffled
         // i = 0 -> A // i = 1 -> B // i = 2 -> C // i = 3 -> D
