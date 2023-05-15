@@ -35,6 +35,8 @@ public class GameActivity extends AppCompatActivity {
     List<byte[]> hmacs;
     List<byte[]> enc_awards;
 
+
+
     SecretKey keyHmac;
 
     List<byte[]> digitalSignaturesList;
@@ -189,15 +191,17 @@ public class GameActivity extends AppCompatActivity {
         byte [] encKey = encKeys.get(listShuffled.get(0));
         byte [] hmac = hmacs.get(listShuffled.get(0));
         byte [] encAward = enc_awards.get(listShuffled.get(0));
-
+        byte [] signature = digitalSignaturesList.get(listShuffled.get(0));
+        String publicKey = publicKeysList.get(listShuffled.get(0));
         Log.d("MyApp", "CHOOSED AWARD: " + award);
         Log.d("MyApp", "ENC KEY: " + KeyGen.byteArrayToHexString(encKey));
         Log.d("MyApp", "HMAC: " + HMAC.byteArrayToHexString(hmac));
         Log.d("MyApp", "CIPHER: " + Base64.getEncoder().encodeToString(encAward));
-
+        Log.d("MyApp", "AWARD SIGNATURE = " + Base64.getEncoder().encodeToString(signature));
+        Log.d("MyApp", "PUBLIC_KEY = " + publicKey);
         AwardABtn.setVisibility(View.INVISIBLE);
 
-        goToDecipher(hmac, keyHmac, encAward);
+        goToDecipher(hmac, keyHmac, encAward, signature, publicKey);
     }
 
     public void AwardBChoosen(View v){
@@ -207,15 +211,19 @@ public class GameActivity extends AppCompatActivity {
         byte [] encKey = encKeys.get(listShuffled.get(1));
         byte [] hmac = hmacs.get(listShuffled.get(1));
         byte [] encAward = enc_awards.get(listShuffled.get(1));
+        byte [] signature = digitalSignaturesList.get(listShuffled.get(1));
+        String publicKey = publicKeysList.get(listShuffled.get(1));
 
         Log.d("MyApp", "CHOOSED AWARD: " + award);
         Log.d("MyApp", "ENC KEY: " + KeyGen.byteArrayToHexString(encKey));
         Log.d("MyApp", "HMAC: " + HMAC.byteArrayToHexString(hmac));
         Log.d("MyApp", "CIPHER: " + Base64.getEncoder().encodeToString(encAward));
+        Log.d("MyApp", "AWARD SIGNATURE = " + Base64.getEncoder().encodeToString(signature));
+        Log.d("MyApp", "PUBLIC_KEY = " + publicKey);
 
         AwardBBtn.setVisibility(View.INVISIBLE);
 
-        goToDecipher(hmac, keyHmac, encAward);
+        goToDecipher(hmac, keyHmac, encAward, signature, publicKey);
     }
 
     public void AwardCChoosen(View v){
@@ -225,15 +233,19 @@ public class GameActivity extends AppCompatActivity {
         byte [] encKey = encKeys.get(listShuffled.get(2));
         byte [] hmac = hmacs.get(listShuffled.get(2));
         byte [] encAward = enc_awards.get(listShuffled.get(2));
+        byte [] signature = digitalSignaturesList.get(listShuffled.get(2));
+        String publicKey = publicKeysList.get(listShuffled.get(2));
 
         Log.d("MyApp", "CHOOSED AWARD: " + award);
         Log.d("MyApp", "ENC KEY: " + KeyGen.byteArrayToHexString(encKey));
         Log.d("MyApp", "HMAC: " + HMAC.byteArrayToHexString(hmac));
         Log.d("MyApp", "CIPHER: " + Base64.getEncoder().encodeToString(encAward));
+        Log.d("MyApp", "AWARD SIGNATURE = " + Base64.getEncoder().encodeToString(signature));
+        Log.d("MyApp", "PUBLIC_KEY = " + publicKey);
 
         AwardCBtn.setVisibility(View.INVISIBLE);
 
-        goToDecipher(hmac, keyHmac, encAward);
+        goToDecipher(hmac, keyHmac, encAward, signature, publicKey);
     }
 
     public void AwardDChoosen(View v){
@@ -243,23 +255,29 @@ public class GameActivity extends AppCompatActivity {
         byte [] encKey = encKeys.get(listShuffled.get(3));
         byte [] hmac = hmacs.get(listShuffled.get(3));
         byte [] encAward = enc_awards.get(listShuffled.get(3));
+        byte [] signature = digitalSignaturesList.get(listShuffled.get(3));
+        String publicKey = publicKeysList.get(listShuffled.get(3));
 
         Log.d("MyApp", "CHOOSED AWARD: " + award);
         Log.d("MyApp", "ENC KEY: " + KeyGen.byteArrayToHexString(encKey));
         Log.d("MyApp", "HMAC: " + HMAC.byteArrayToHexString(hmac));
         Log.d("MyApp", "CIPHER: " + Base64.getEncoder().encodeToString(encAward));
+        Log.d("MyApp", "AWARD SIGNATURE = " + Base64.getEncoder().encodeToString(signature));
+        Log.d("MyApp", "PUBLIC_KEY = " + publicKey);
 
         AwardDBtn.setVisibility(View.INVISIBLE);
 
-        goToDecipher(hmac, keyHmac, encAward);
+        goToDecipher(hmac, keyHmac, encAward, signature, publicKey);
     }
 
-    public void goToDecipher (byte[] hmac, SecretKey hmacKey, byte[] encAward) {
+    public void goToDecipher (byte[] hmac, SecretKey hmacKey, byte[] encAward, byte[] signature, String publicKey) {
         Intent goToDecryptIntent = new Intent(this, DecryptActivity.class);
         goToDecryptIntent.putExtra("flag","FROM_GAME");
         goToDecryptIntent.putExtra("HMAC", hmac);
         goToDecryptIntent.putExtra("HMAC_KEY", hmacKey);
         goToDecryptIntent.putExtra("ENC_AWARD", encAward);
+        goToDecryptIntent.putExtra("SIGNATURE", signature);
+        goToDecryptIntent.putExtra("PUBLIC_KEY", publicKey);
         startActivity(goToDecryptIntent);
     }
 
