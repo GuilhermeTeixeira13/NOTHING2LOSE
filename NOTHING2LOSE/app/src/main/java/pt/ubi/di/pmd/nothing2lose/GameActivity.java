@@ -9,6 +9,7 @@ import android.os.Bundle;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
+import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -111,8 +112,9 @@ public class GameActivity extends AppCompatActivity {
         for(int i = 0; i < 4; i++) {
             RSAGeneration rsaG = new RSAGeneration();
             try {
-                String publicKey = rsaG.generatePublicKeyBase64();
-                String privateKey = rsaG.generatePrivateKeyBase64();
+                KeyPair kp =  rsaG.generateKeyPair();
+                String publicKey = rsaG.getPublicKeyBase64(kp);
+                String privateKey = rsaG.getPrivateKeyBase64(kp);
                 publicKeysList.add(publicKey);
                 privateKeysList.add(privateKey);
             } catch (NoSuchAlgorithmException e) {
