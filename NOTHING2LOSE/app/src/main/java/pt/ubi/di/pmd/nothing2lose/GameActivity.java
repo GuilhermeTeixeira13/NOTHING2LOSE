@@ -100,13 +100,12 @@ public class GameActivity extends AppCompatActivity {
 
         // Generate a list of numbers [0,3] shuffled
         // i = 0 -> A // i = 1 -> B // i = 2 -> C // i = 3 -> D
-        ArrayList<Integer> listShuffled = new ArrayList<Integer>();
+        listShuffled = new ArrayList<Integer>();
         listShuffled.add(0);
         listShuffled.add(1);
         listShuffled.add(2);
         listShuffled.add(3);
         Collections.shuffle(listShuffled);
-
     }
 
     public static SecretKey generateSecretKey() {
@@ -161,7 +160,6 @@ public class GameActivity extends AppCompatActivity {
     public void AwardBChoosen(View v){
         Log.d("MyApp", "Clicked on B award.");
 
-
         Award award = awards.get(listShuffled.get(1));
         byte [] encKey = encKeys.get(listShuffled.get(1));
         byte [] hmac = hmacs.get(listShuffled.get(1));
@@ -180,7 +178,6 @@ public class GameActivity extends AppCompatActivity {
     public void AwardCChoosen(View v){
         Log.d("MyApp", "Clicked on C award.");
 
-
         Award award = awards.get(listShuffled.get(2));
         byte [] encKey = encKeys.get(listShuffled.get(2));
         byte [] hmac = hmacs.get(listShuffled.get(2));
@@ -198,8 +195,7 @@ public class GameActivity extends AppCompatActivity {
 
     public void AwardDChoosen(View v){
         Log.d("MyApp", "Clicked on D award.");
-
-
+        
         Award award = awards.get(listShuffled.get(3));
         byte [] encKey = encKeys.get(listShuffled.get(3));
         byte [] hmac = hmacs.get(listShuffled.get(3));
