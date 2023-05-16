@@ -31,6 +31,8 @@ public class DecryptActivity extends AppCompatActivity {
     String publicKey;
     String hmac_choice;
 
+    String aes_choice;
+
     private DecryptionTask decryptionTask;
 
 
@@ -60,6 +62,7 @@ public class DecryptActivity extends AppCompatActivity {
             signature = (byte[]) getIntent().getSerializableExtra("SIGNATURE");
             publicKey = (String) getIntent().getSerializableExtra("PUBLIC_KEY");
             hmac_choice = (String) getIntent().getSerializableExtra("HMAC_Choice");
+            aes_choice = (String) getIntent().getSerializableExtra("AES_Choice");
         }
 
         decryptionTask = new DecryptionTask();
@@ -103,7 +106,11 @@ public class DecryptActivity extends AppCompatActivity {
                 }
 
                 try {
-                    DecryptedAward = EncryptDecrypt.decryptAward(key, encAward);
+                    if (aes_choice.equals("CBC")) {
+                        DecryptedAward = EncryptDecrypt.decryptAward(key, encAward);
+                    }else if (aes_choice.equals("CTR")){
+                        DecryptedAward = EncryptDecryptCTR.decryptAward(key, encAward);
+                    }
                     // Successful decryption
                     break;
                 } catch (Exception e) {

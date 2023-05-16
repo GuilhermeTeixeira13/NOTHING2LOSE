@@ -47,6 +47,7 @@ public class GameActivity extends AppCompatActivity {
     ArrayList<Integer> listShuffled;
 
     String hmac_choice;
+    String aes_choice;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +56,8 @@ public class GameActivity extends AppCompatActivity {
 
         Bundle extras = getIntent().getExtras();
         hmac_choice = extras.getString("HMAC");
+        aes_choice = extras.getString("AES");
+
         // Find the award buttons in the layout.
         AwardABtn = (Button) findViewById(R.id.awardA);
         AwardBBtn = (Button) findViewById(R.id.awardB);
@@ -109,13 +112,25 @@ public class GameActivity extends AppCompatActivity {
 
         enc_awards = new ArrayList<>();
         // Encrypt each award using a different encryption key and add it to a list of encrypted awards.
-        for (int i = 0; i < 4; i++) {
-            try {
-                byte[] encAward = EncryptDecrypt.encryptAward(encKeys.get(i), awards.get(i));
-                Log.d("MyApp", "AWARD CYPHER = " + Base64.getEncoder().encodeToString(encAward)); // Log the encrypted award.
-                enc_awards.add(encAward);
-            } catch (Exception e) {
-                e.printStackTrace();
+        if (aes_choice.equals("CBC")){
+            for (int i = 0; i < 4; i++) {
+                try {
+                    byte[] encAward = EncryptDecrypt.encryptAward(encKeys.get(i), awards.get(i));
+                    Log.d("MyApp", "AWARD CYPHER = " + Base64.getEncoder().encodeToString(encAward)); // Log the encrypted award.
+                    enc_awards.add(encAward);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        } else if (aes_choice.equals("CTR")){
+            for (int i = 0; i < 4; i++) {
+                try {
+                    byte[] encAward = EncryptDecryptCTR.encryptAward(encKeys.get(i), awards.get(i));
+                    Log.d("MyApp", "AWARD CYPHER = " + Base64.getEncoder().encodeToString(encAward)); // Log the encrypted award.
+                    enc_awards.add(encAward);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
 
@@ -228,7 +243,7 @@ public class GameActivity extends AppCompatActivity {
         Log.d("MyApp", "PUBLIC_KEY = " + publicKey);
         AwardABtn.setVisibility(View.INVISIBLE);
 
-        goToDecipher(hmac, keyHmac, encAward, signature, publicKey, hmac_choice);
+        goToDecipher(hmac, keyHmac, encAward, signature, publicKey, hmac_choice,aes_choice);
     }
 
     public void AwardBChoosen(View v){
@@ -251,7 +266,7 @@ public class GameActivity extends AppCompatActivity {
         AwardBBtn.setVisibility(View.INVISIBLE);
 
 
-        goToDecipher(hmac, keyHmac, encAward, signature, publicKey, hmac_choice);
+        goToDecipher(hmac, keyHmac, encAward, signature, publicKey, hmac_choice,aes_choice);
     }
 
     public void AwardCChoosen(View v){
@@ -273,7 +288,7 @@ public class GameActivity extends AppCompatActivity {
 
 
         AwardCBtn.setVisibility(View.INVISIBLE);
-        goToDecipher(hmac, keyHmac, encAward, signature, publicKey, hmac_choice);
+        goToDecipher(hmac, keyHmac, encAward, signature, publicKey, hmac_choice,aes_choice);
     }
 
     public void AwardDChoosen(View v){
@@ -295,11 +310,11 @@ public class GameActivity extends AppCompatActivity {
 
         AwardDBtn.setVisibility(View.INVISIBLE);
 
-        goToDecipher(hmac, keyHmac, encAward, signature, publicKey, hmac_choice);
+        goToDecipher(hmac, keyHmac, encAward, signature, publicKey, hmac_choice,aes_choice);
     }
 
 
-    public void goToDecipher (byte[] hmac, SecretKey hmacKey, byte[] encAward, byte[] signature, String publicKey, String hmac_choice) {
+    public void goToDecipher (byte[] hmac, SecretKey hmacKey, byte[] encAward, byte[] signature, String publicKey, String hmac_choice,String aes_choice) {
         Intent goToDecryptIntent = new Intent(this, DecryptActivity.class);
         goToDecryptIntent.putExtra("flag","FROM_GAME");
         goToDecryptIntent.putExtra("HMAC", hmac);
@@ -308,6 +323,7 @@ public class GameActivity extends AppCompatActivity {
         goToDecryptIntent.putExtra("SIGNATURE", signature);
         goToDecryptIntent.putExtra("PUBLIC_KEY", publicKey);
         goToDecryptIntent.putExtra("HMAC_Choice", hmac_choice);
+        goToDecryptIntent.putExtra("AES_Choice", aes_choice);
         startActivity(goToDecryptIntent);
     }
 
