@@ -1,66 +1,81 @@
 package pt.ubi.di.pmd.nothing2lose;
 
+
+import android.util.Log;
+
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 
 public class KeyGen {
-    private static final int SIMPLE_KEY_BITS = 20;
-    private static final int MEDIUM_KEY_BITS = 21;
-    private static final int RARE_KEY_BITS = 22;
-    private static final int LEGENDARY_KEY_BITS = 23;
+    /**
+     * Generates a list of keys for different types of awards.
+     * @return a list of byte arrays containing the generated keys.
+     */
+    public List<byte []> generateKeys() {
+        List<byte []> keys = new ArrayList<>();
 
-    public List<byte[]> generateKeys() {
-        SecureRandom random = new SecureRandom();
-        List<byte[]> keys = new ArrayList<>();
+        // Define the number of bits for different types of awards
+        int simplePremiumBits = 20;
+        int avgPrizeBits = 21;
+        int rarePremiumBits = 22;
+        int legendaryPremiumBits = 23;
 
-        // Gerar chave simples
-        byte[] simpleKeyBytes = new byte[(SIMPLE_KEY_BITS + 7) / 8];
-        random.nextBytes(simpleKeyBytes);
-        byte[] simpleKey = new byte[SIMPLE_KEY_BITS / 8 + 13];
-        System.arraycopy(simpleKeyBytes, 0, simpleKey, 0, simpleKeyBytes.length);
-        keys.add(simpleKey);
+        // Generate keys for different types of awards
+        byte[] simplePremiumKey = createKey(128, simplePremiumBits);
+        byte[] avgPrizeKey = createKey(128, avgPrizeBits);
+        byte[] rarePremiumKey = createKey(128, rarePremiumBits);
+        byte[] legendaryPremiumKey = createKey(128, legendaryPremiumBits);
 
-        // Gerar chave média
-        byte[] mediumKeyBytes = new byte[(MEDIUM_KEY_BITS + 7) / 8];
-        random.nextBytes(mediumKeyBytes);
-        byte[] mediumKey = new byte[MEDIUM_KEY_BITS / 8 + 13];
-        System.arraycopy(mediumKeyBytes, 0, mediumKey, 0, mediumKeyBytes.length);
-        keys.add(mediumKey);
+        // Add the keys to the list
+        keys.add(simplePremiumKey);
+        keys.add(avgPrizeKey);
+        keys.add(rarePremiumKey);
+        keys.add(legendaryPremiumKey);
 
-        // Gerar chave rara
-        byte[] rareKeyBytes = new byte[(RARE_KEY_BITS + 7) / 8];
-        random.nextBytes(rareKeyBytes);
-        byte[] rareKey = new byte[RARE_KEY_BITS / 8 + 13];
-        System.arraycopy(rareKeyBytes, 0, rareKey, 0, rareKeyBytes.length);
-        keys.add(rareKey);
-
-        // Gerar chave lendária
-        byte[] legendaryKeyBytes = new byte[(LEGENDARY_KEY_BITS + 7) / 8];
-        random.nextBytes(legendaryKeyBytes);
-        byte[] legendaryKey = new byte[LEGENDARY_KEY_BITS / 8 + 13];
-        System.arraycopy(legendaryKeyBytes, 0, legendaryKey, 0, legendaryKeyBytes.length);
-        keys.add(legendaryKey);
-
-        return keys;
+        return keys; // Return the list of generated keys
     }
 
+    /**
+     * Creates a random key of a given size with a specified number of random bits.
+     * @param keySize the size of the key in bits
+     * @param randomSize the number of bits to be filled with random data
+     * @return a byte array containing the generated key
+     */
+    public static byte[] createKey(int keySize, int randomSize) {
+        byte[] key = new byte[keySize/8]; // Create a byte array for the key
+        SecureRandom random = new SecureRandom(); // Create a secure random number generator
+
+        // Fill the first x bits with random data
+        int randomBytes = randomSize/8;
+        byte[] randomData = new byte[randomBytes];
+        random.nextBytes(randomData);
+        System.arraycopy(randomData, 0, key, 0, randomBytes);
+
+        // Set the remaining bits to 0
+        for (int i = randomBytes; i < key.length; i++) {
+            key[i] = 0;
+        }
+
+        return key; // Return the generated key
+    }
+
+    private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
+
+    /**
+     * Converts a byte array to a hexadecimal string.
+     * @param bytes the byte array to be converted
+     * @return a hexadecimal string representing the byte array
+     */
     public static String byteArrayToHexString(byte[] bytes) {
-        StringBuilder sb = new StringBuilder();
-        for (byte b : bytes) {
-            sb.append(String.format("%02X", b));
+        char[] hexChars = new char[bytes.length * 2];
+        for (int i = 0; i < bytes.length; i++) {
+            int v = bytes[i] & 0xFF;
+            hexChars[i * 2] = HEX_ARRAY[v >>> 4];
+            hexChars[i * 2 + 1] = HEX_ARRAY[v & 0x0F];
         }
-        return sb.toString();
-    }
-
-    public byte[] hexStringToByteArray(String hexString) {
-        int length = hexString.length();
-        byte[] byteArray = new byte[length / 2];
-        for (int i = 0; i < length; i += 2) {
-            byteArray[i / 2] = (byte) ((Character.digit(hexString.charAt(i), 16) << 4)
-                    + Character.digit(hexString.charAt(i + 1), 16));
-        }
-        return byteArray;
+        return new String(hexChars); // Return the hexadecimal string
     }
 }
+
 

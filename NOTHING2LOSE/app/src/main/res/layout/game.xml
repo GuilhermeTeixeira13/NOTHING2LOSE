@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
-    android:orientation="vertical"
+    android:background="@color/light_gray"
     android:padding="16dp">
 
     <TextView
@@ -13,60 +13,77 @@
         android:layout_height="wrap_content"
         android:text="Choose a ticket!"
         android:textColor="@color/black"
-        android:textSize="24sp"
-        android:layout_marginTop="25dp"
-        android:layout_marginBottom="35dp"
+        android:textSize="34sp"
+        android:layout_marginTop="200sp"
         android:layout_gravity="center_horizontal"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/awardA"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="A"
-        android:layout_marginBottom="16sp"
+        android:layout_marginTop="25sp"
+        android:textColor="@color/white"
         android:onClick="AwardAChoosen"
-        android:backgroundTint="@color/gray"/>
+        android:background="@drawable/rounded_corners"
+        app:layout_constraintTop_toBottomOf="@+id/titleText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/awardB"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="B"
-        android:layout_marginBottom="16sp"
+        android:layout_marginTop="15sp"
+        android:textColor="@color/white"
         android:onClick="AwardBChoosen"
-        android:backgroundTint="@color/gray"/>
+        android:background="@drawable/rounded_corners"
+        app:layout_constraintTop_toBottomOf="@+id/awardA"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/awardC"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="C"
-        android:layout_marginBottom="16sp"
+        android:textColor="@color/white"
+        android:layout_marginTop="15sp"
         android:onClick="AwardCChoosen"
-        android:backgroundTint="@color/gray"/>
+        android:background="@drawable/rounded_corners"
+        app:layout_constraintTop_toBottomOf="@+id/awardB"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/awardD"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="D"
-        android:layout_marginBottom="16sp"
+        android:textColor="@color/white"
+        android:layout_marginTop="15sp"
         android:onClick="AwardDChoosen"
-        android:backgroundTint="@color/gray"/>
+        android:background="@drawable/rounded_corners"
+        app:layout_constraintTop_toBottomOf="@+id/awardC"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
-    <com.google.android.material.button.MaterialButton
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/logoutButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="70sp"
         android:textAllCaps="true"
-        app:backgroundTint="@color/gray"
-        app:icon="@drawable/icon_logout"
-        app:iconGravity="textStart"
-        android:layout_gravity="end|bottom"
-        android:onClick="onLogoutClicked"/>
+        android:text="Logout"
+        android:textColor="@color/white"
+        android:background="@drawable/rounded_corners"
+        android:onClick="onLogoutClicked"
+        app:layout_constraintTop_toBottomOf="@+id/awardD"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

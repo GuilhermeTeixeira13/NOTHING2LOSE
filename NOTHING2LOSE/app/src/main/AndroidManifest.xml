@@ -32,7 +32,8 @@
 
         <activity android:name=".GameActivity" />
 
-        <activity android:name=".hmac_choice" />
+
+        <activity android:name=".DecryptActivity" />
     </application>
 
 </manifest>
