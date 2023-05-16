@@ -32,7 +32,6 @@
 
         <activity android:name=".GameActivity" />
 
-
         <activity android:name=".DecryptActivity" />
     </application>
 
