@@ -92,21 +92,20 @@ public class GameActivity extends AppCompatActivity {
         // Calcula HMAC para cada award
         hmacs = new ArrayList<>();
         if (hmac_choice.equals("HMAC256")){
-            HMAC calculateHMAC = new HMAC();
             for (Award award : awards) {
-              byte[] hmac = calculateHMAC.calculateHMAC(keyHmac, award);
+              byte[] hmac = HMAC.calculateHMAC(keyHmac, award);
               hmacs.add(hmac);
               String hmacString = HMAC.byteArrayToHexString(hmac);
               Log.d("MyApp", "HMAC = " + hmacString);
             }
         } else if (hmac_choice.equals("HMAC512")) {
-            CalculateHMAC512 calculateHMAC512 = new CalculateHMAC512();
             for (Award award : awards) {
-              byte[] hmac = calculateHMAC512.calculateHMAC(keyHmac, award);
-              hmacs.add(hmac);
-              String hmacString = HMAC.byteArrayToHexString(hmac);
-              Log.d("MyApp", "HMAC = " + hmacString);
+                byte[] hmac = CalculateHMAC512.calculateHMAC(keyHmac, award);
+                hmacs.add(hmac);
+                String hmacString = HMAC.byteArrayToHexString(hmac);
+                Log.d("MyApp", "HMAC = " + hmacString);
             }
+        }
 
         enc_awards = new ArrayList<>();
         // Encrypt each award using a different encryption key and add it to a list of encrypted awards.
@@ -153,7 +152,7 @@ public class GameActivity extends AppCompatActivity {
 
         // Generate a list of numbers [0,3] shuffled
         // i = 0 -> A // i = 1 -> B // i = 2 -> C // i = 3 -> D
-        listShuffled = new ArrayList<Integer>();
+        listShuffled = new ArrayList<>();
         listShuffled.add(0);
         listShuffled.add(1);
         listShuffled.add(2);
@@ -229,7 +228,7 @@ public class GameActivity extends AppCompatActivity {
         Log.d("MyApp", "PUBLIC_KEY = " + publicKey);
         AwardABtn.setVisibility(View.INVISIBLE);
 
-        goToDecipher(hmac, keyHmac, encAward, signature, publicKey);
+        goToDecipher(hmac, keyHmac, encAward, signature, publicKey, hmac_choice);
     }
 
     public void AwardBChoosen(View v){
@@ -252,7 +251,7 @@ public class GameActivity extends AppCompatActivity {
         AwardBBtn.setVisibility(View.INVISIBLE);
 
 
-        goToDecipher(hmac, keyHmac, encAward, signature, publicKey);
+        goToDecipher(hmac, keyHmac, encAward, signature, publicKey, hmac_choice);
     }
 
     public void AwardCChoosen(View v){
@@ -274,7 +273,7 @@ public class GameActivity extends AppCompatActivity {
 
 
         AwardCBtn.setVisibility(View.INVISIBLE);
-        goToDecipher(hmac, keyHmac, encAward, signature, publicKey);
+        goToDecipher(hmac, keyHmac, encAward, signature, publicKey, hmac_choice);
     }
 
     public void AwardDChoosen(View v){
@@ -296,11 +295,11 @@ public class GameActivity extends AppCompatActivity {
 
         AwardDBtn.setVisibility(View.INVISIBLE);
 
-        goToDecipher(hmac, keyHmac, encAward, signature, publicKey);
+        goToDecipher(hmac, keyHmac, encAward, signature, publicKey, hmac_choice);
     }
 
 
-    public void goToDecipher (byte[] hmac, SecretKey hmacKey, byte[] encAward, byte[] signature, String publicKey) {
+    public void goToDecipher (byte[] hmac, SecretKey hmacKey, byte[] encAward, byte[] signature, String publicKey, String hmac_choice) {
         Intent goToDecryptIntent = new Intent(this, DecryptActivity.class);
         goToDecryptIntent.putExtra("flag","FROM_GAME");
         goToDecryptIntent.putExtra("HMAC", hmac);
@@ -308,6 +307,7 @@ public class GameActivity extends AppCompatActivity {
         goToDecryptIntent.putExtra("ENC_AWARD", encAward);
         goToDecryptIntent.putExtra("SIGNATURE", signature);
         goToDecryptIntent.putExtra("PUBLIC_KEY", publicKey);
+        goToDecryptIntent.putExtra("HMAC_Choice", hmac_choice);
         startActivity(goToDecryptIntent);
     }
 
