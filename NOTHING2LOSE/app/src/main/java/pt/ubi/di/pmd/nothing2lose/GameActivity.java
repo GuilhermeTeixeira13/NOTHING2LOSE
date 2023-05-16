@@ -92,9 +92,9 @@ public class GameActivity extends AppCompatActivity {
         // Calcula HMAC para cada award
         hmacs = new ArrayList<>();
         if (hmac_choice.equals("HMAC256")){
-            CalculateHMAC calculateHMAC = new CalculateHMAC();
+            HMAC calculateHMAC = new HMAC();
             for (Award award : awards) {
-              byte[] hmac = calculateHMAC.calcHMAC(keyHmac, award);
+              byte[] hmac = calculateHMAC.calculateHMAC(keyHmac, award);
               hmacs.add(hmac);
               String hmacString = HMAC.byteArrayToHexString(hmac);
               Log.d("MyApp", "HMAC = " + hmacString);
@@ -102,7 +102,7 @@ public class GameActivity extends AppCompatActivity {
         } else if (hmac_choice.equals("HMAC512")) {
             CalculateHMAC512 calculateHMAC512 = new CalculateHMAC512();
             for (Award award : awards) {
-              byte[] hmac = calculateHMAC512.calcHMAC(keyHmac, award);
+              byte[] hmac = calculateHMAC512.calculateHMAC(keyHmac, award);
               hmacs.add(hmac);
               String hmacString = HMAC.byteArrayToHexString(hmac);
               Log.d("MyApp", "HMAC = " + hmacString);
