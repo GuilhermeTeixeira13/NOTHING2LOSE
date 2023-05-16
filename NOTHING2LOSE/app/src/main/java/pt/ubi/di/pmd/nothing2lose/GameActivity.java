@@ -46,11 +46,15 @@ public class GameActivity extends AppCompatActivity {
 
     ArrayList<Integer> listShuffled;
 
+    String hmac_choice;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.game);
 
+        Bundle extras = getIntent().getExtras();
+        hmac_choice = extras.getString("HMAC");
         // Find the award buttons in the layout.
         AwardABtn = (Button) findViewById(R.id.awardA);
         AwardBBtn = (Button) findViewById(R.id.awardB);
@@ -85,14 +89,24 @@ public class GameActivity extends AppCompatActivity {
         // Log the HMAC key.
         Log.d("MyApp", "HMAC KEY = " + Base64.getEncoder().encodeToString(keyHmac.getEncoded()));
 
+        // Calcula HMAC para cada award
         hmacs = new ArrayList<>();
-        // Generate an HMAC for each award and add it to a list of HMACs.
-        for (Award award : awards) {
-            byte[] hmac = HMAC.calculateHMAC(keyHmac, award);
-            hmacs.add(hmac);
-            String hmacString = HMAC.byteArrayToHexString(hmac);
-            Log.d("MyApp", "HMAC = " + hmacString);
-        }
+        if (hmac_choice.equals("HMAC256")){
+            CalculateHMAC calculateHMAC = new CalculateHMAC();
+            for (Award award : awards) {
+              byte[] hmac = calculateHMAC.calcHMAC(keyHmac, award);
+              hmacs.add(hmac);
+              String hmacString = HMAC.byteArrayToHexString(hmac);
+              Log.d("MyApp", "HMAC = " + hmacString);
+            }
+        } else if (hmac_choice.equals("HMAC512")) {
+            CalculateHMAC512 calculateHMAC512 = new CalculateHMAC512();
+            for (Award award : awards) {
+              byte[] hmac = calculateHMAC512.calcHMAC(keyHmac, award);
+              hmacs.add(hmac);
+              String hmacString = HMAC.byteArrayToHexString(hmac);
+              Log.d("MyApp", "HMAC = " + hmacString);
+            }
 
         enc_awards = new ArrayList<>();
         // Encrypt each award using a different encryption key and add it to a list of encrypted awards.
@@ -189,6 +203,18 @@ public class GameActivity extends AppCompatActivity {
     public void AwardAChoosen(View v) {
         Log.d("MyApp", "Clicked on A award.");
 
+
+       /* Random random = new Random();
+        int randomNumber = random.nextInt(4);
+
+        Log.d("MyApp", "Escolheu o award: " + awards.get(randomNumber));
+        Log.d("MyApp", "Chave usada para cifrar: " + KeyGen.byteArrayToHexString(keys.get(randomNumber)));
+        if (hmac_choice.equals("HMAC256")){
+            Log.d("MyApp", "HMAC: " + CalculateHMAC.byteArrayToHexString(hmacs.get(randomNumber)));
+        } else if (hmac_choice.equals("HMAC512")) {
+            Log.d("MyApp", "HMAC: " + CalculateHMAC512.byteArrayToHexString(hmacs.get(randomNumber)));
+        } */
+
         Award award = awards.get(listShuffled.get(0));
         byte [] encKey = encKeys.get(listShuffled.get(0));
         byte [] hmac = hmacs.get(listShuffled.get(0));
@@ -225,6 +251,7 @@ public class GameActivity extends AppCompatActivity {
 
         AwardBBtn.setVisibility(View.INVISIBLE);
 
+
         goToDecipher(hmac, keyHmac, encAward, signature, publicKey);
     }
 
@@ -245,8 +272,8 @@ public class GameActivity extends AppCompatActivity {
         Log.d("MyApp", "AWARD SIGNATURE = " + Base64.getEncoder().encodeToString(signature));
         Log.d("MyApp", "PUBLIC_KEY = " + publicKey);
 
-        AwardCBtn.setVisibility(View.INVISIBLE);
 
+        AwardCBtn.setVisibility(View.INVISIBLE);
         goToDecipher(hmac, keyHmac, encAward, signature, publicKey);
     }
 
@@ -271,6 +298,7 @@ public class GameActivity extends AppCompatActivity {
 
         goToDecipher(hmac, keyHmac, encAward, signature, publicKey);
     }
+
 
     public void goToDecipher (byte[] hmac, SecretKey hmacKey, byte[] encAward, byte[] signature, String publicKey) {
         Intent goToDecryptIntent = new Intent(this, DecryptActivity.class);

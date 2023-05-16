@@ -111,15 +111,15 @@ public class MainActivity extends AppCompatActivity {
 
             if (result) {
                 saveUserInSharedPreferences();
-                goToGamePage();
+                goTohmac_choicePage();
             } else {
                 Toast.makeText(MainActivity.this, "We're sorry, but we couldn't log you in.", Toast.LENGTH_LONG).show();
             }
         }
     }
 
-    public void goToGamePage(){
-        Intent intent = new Intent(this, GameActivity.class);
+    public void goTohmac_choicePage(){
+        Intent intent = new Intent(this, hmac_choice.class);
         startActivity(intent);
     }
 
