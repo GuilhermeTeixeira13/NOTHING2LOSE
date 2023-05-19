@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void goTohmac_choicePage(){
-        Intent intent = new Intent(this, hmac_choice.class);
+        Intent intent = new Intent(this, HMACChoiceActivity.class);
         startActivity(intent);
     }
 

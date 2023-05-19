@@ -22,16 +22,17 @@ public class DecryptActivity extends AppCompatActivity {
     TextView congratzTxt;
     TextView categoryTxt;
 
-    byte[] hmac;
+    byte[] initialHMAC;
+    byte[] newHMAC;
+
     SecretKey hmacKey;
     byte[] encAward;
 
     byte[] signature;
 
     String publicKey;
-    String hmac_choice;
-
-    String aes_choice;
+    String hmacChoice;
+    String aesChoice;
 
     private DecryptionTask decryptionTask;
 
@@ -50,19 +51,17 @@ public class DecryptActivity extends AppCompatActivity {
         categoryTxt = (TextView) findViewById(R.id.award_category);
         categoryTxt.setVisibility(View.INVISIBLE);
 
-        // Getting the flag from the intent that he came from
         Intent intent = getIntent();
         String checkFlag= intent.getStringExtra("flag");
 
-        // Check flag and initialize objects
         if(checkFlag.equals("FROM_GAME")){
-            hmac = (byte[]) getIntent().getSerializableExtra("HMAC");
+            initialHMAC = (byte[]) getIntent().getSerializableExtra("HMAC");
             hmacKey = (SecretKey) getIntent().getSerializableExtra("HMAC_KEY");
             encAward = (byte[]) getIntent().getSerializableExtra("ENC_AWARD");
             signature = (byte[]) getIntent().getSerializableExtra("SIGNATURE");
             publicKey = (String) getIntent().getSerializableExtra("PUBLIC_KEY");
-            hmac_choice = (String) getIntent().getSerializableExtra("HMAC_Choice");
-            aes_choice = (String) getIntent().getSerializableExtra("AES_Choice");
+            hmacChoice = (String) getIntent().getSerializableExtra("HMAC_Choice");
+            aesChoice = (String) getIntent().getSerializableExtra("AES_Choice");
         }
 
         decryptionTask = new DecryptionTask();
@@ -99,17 +98,15 @@ public class DecryptActivity extends AppCompatActivity {
                     key[j] = (byte) ((i >> (j * 8)) & 0xFF);
                 }
 
-                // Log.d("MyApp", "key = " + KeyGen.bytesToHex(key));
-
                 if (isCancelled()) {
-                    return null; // terminate the task
+                    return null;
                 }
 
                 try {
-                    if (aes_choice.equals("CBC")) {
-                        DecryptedAward = EncryptDecrypt.decryptAward(key, encAward);
-                    }else if (aes_choice.equals("CTR")){
-                        DecryptedAward = EncryptDecryptCTR.decryptAward(key, encAward);
+                    if (aesChoice.equals("CBC")) {
+                        DecryptedAward = EncryptDecrypt.decryptAwardCBC(key, encAward);
+                    }else if (aesChoice.equals("CTR")){
+                        DecryptedAward = EncryptDecrypt.decryptAwardCTR(key, encAward);
                     }
                     // Successful decryption
                     break;
@@ -124,57 +121,35 @@ public class DecryptActivity extends AppCompatActivity {
 
             Log.d("MyApp", "Decryption time: " + elapsedTime / 1000 + " seconds");
 
-            if (hmac_choice.equals("HMAC256")) {
-                byte[] hmacNew = HMAC.calculateHMAC(hmacKey, DecryptedAward);
-                if (Arrays.equals(hmac, hmacNew)) {
-                    Log.d("MyApp", "SUCCESS! HMAC's match.");
-
-                    RSASignatureVerification rsaVerification = new RSASignatureVerification();
-
-                    boolean verificationSignature = false;
-                    try {
-                        verificationSignature = rsaVerification.verifyDigitalSignature(DecryptedAward.toString(), publicKey, signature);
-                    } catch (Exception e) {
-                        Log.e("MyApp", e.toString());
-                    }
-                    if (verificationSignature) {
-                        Log.d("MyApp", "SUCCESS! Signature's match.");
-
-                        Log.d("MyApp", "SUCCESS! Decrypted Award: " + DecryptedAward);
-
-                        return DecryptedAward;
-                    } else {
-                        Log.d("MyApp", "Signature's do not match.");
-                    }
-                } else {
-                    Log.d("MyApp", "HMAC's do not match.");
-                }
-            } else if (hmac_choice.equals("HMAC512")){
-                byte[] hmacNew = CalculateHMAC512.calculateHMAC(hmacKey, DecryptedAward);
-                if (Arrays.equals(hmac, hmacNew)) {
-                    Log.d("MyApp", "SUCCESS! HMAC's match.");
-
-                    RSASignatureVerification rsaVerification = new RSASignatureVerification();
-
-                    boolean verificationSignature = false;
-                    try {
-                        verificationSignature = rsaVerification.verifyDigitalSignature(DecryptedAward.toString(), publicKey, signature);
-                    } catch (Exception e) {
-                        Log.e("MyApp", e.toString());
-                    }
-                    if (verificationSignature) {
-                        Log.d("MyApp", "SUCCESS! Signature's match.");
-
-                        Log.d("MyApp", "SUCCESS! Decrypted Award: " + DecryptedAward);
-
-                        return DecryptedAward;
-                    } else {
-                        Log.d("MyApp", "Signature's do not match.");
-                    }
-                } else {
-                    Log.d("MyApp", "HMAC's do not match.");
-                }
+            if (hmacChoice.equals("HMAC256")) {
+                newHMAC = HMAC.calculateHMAC256(hmacKey, DecryptedAward);
+            } else if (hmacChoice.equals("HMAC512")){
+                newHMAC = HMAC.calculateHMAC512(hmacKey, DecryptedAward);
             }
+            if (Arrays.equals(initialHMAC, newHMAC)) {
+                Log.d("MyApp", "SUCCESS! HMAC's match.");
+
+                RSASignatureVerification rsaVerification = new RSASignatureVerification();
+                boolean verificationSignature = false;
+
+                try {
+                    verificationSignature = rsaVerification.verifyDigitalSignature(DecryptedAward.toString(), publicKey, signature);
+                } catch (Exception e) {
+                    Log.e("MyApp", e.toString());
+                }
+                if (verificationSignature) {
+                    Log.d("MyApp", "SUCCESS! Signature's match.");
+
+                    Log.d("MyApp", "SUCCESS! Decrypted Award: " + DecryptedAward);
+
+                    return DecryptedAward;
+                } else {
+                    Log.d("MyApp", "Signature's do not match.");
+                }
+            } else {
+                Log.d("MyApp", "HMAC's do not match.");
+            }
+
             return null;
         }
 
@@ -208,8 +183,7 @@ public class DecryptActivity extends AppCompatActivity {
     }
 
     public void PlayAgainButtonClicked (View v) {
-        Intent goToGameIntent = new Intent(this, GameActivity.class);
-        goToGameIntent.putExtra("HMAC", hmac_choice);
-        startActivity(goToGameIntent);
+        Intent goToHmacChoiceIntent = new Intent(this, HMACChoiceActivity.class);
+        startActivity(goToHmacChoiceIntent);
     }
 }

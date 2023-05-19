@@ -12,7 +12,7 @@ public class KeyGen {
      * Generates a list of keys for different types of awards.
      * @return a list of byte arrays containing the generated keys.
      */
-    public List<byte []> generateKeys() {
+    public static List<byte []> generateKeys() {
         List<byte []> keys = new ArrayList<>();
 
         // Define the number of bits for different types of awards

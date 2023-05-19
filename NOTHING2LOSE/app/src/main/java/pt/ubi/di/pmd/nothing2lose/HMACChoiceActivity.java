@@ -9,34 +9,30 @@ import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-public class AES_Choice extends AppCompatActivity {
+public class HMACChoiceActivity extends AppCompatActivity {
 
-    Button Button_CBC;
-    Button Button_CTR;
-
-    String hmac_choice;
+    Button Button_hash256;
+    Button Button_hash512;
+    Button Button_logout;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.aes_choice);
-        Bundle extras = getIntent().getExtras();
-        hmac_choice = extras.getString("HMAC");
+        setContentView(R.layout.hmac_choice);
 
-        Button_CBC = (Button) findViewById(R.id.ButtonCBC);
-        Button_CTR = (Button) findViewById(R.id.ButtonCTR);
+        Button_hash256 = (Button) findViewById(R.id.hash256);
+        Button_hash512 = (Button) findViewById(R.id.hash512);
+        Button_logout = (Button) findViewById(R.id.logoutButton);
 
     }
 
-    public void onaescbcClicked(View view){
-        Intent intent = new Intent(this, GameActivity.class);
-        intent.putExtra("AES", "CBC");
-        intent.putExtra("HMAC", hmac_choice);
-        startActivity(intent);
+    public void onHMAC256Clicked(View view){
+        Intent goToAESChoiceActivity = new Intent(this, AESChoiceActivity.class);
+        goToAESChoiceActivity.putExtra("HMAC", "HMAC256");
+        startActivity(goToAESChoiceActivity);
     }
-    public void onaesctrClicked(View view){
-        Intent intent = new Intent(this, GameActivity.class);
-        intent.putExtra("AES", "CTR");
-        intent.putExtra("HMAC", hmac_choice);
+    public void onHMAC512Clicked(View view){
+        Intent intent = new Intent(this, AESChoiceActivity.class);
+        intent.putExtra("HMAC", "HMAC512");
         startActivity(intent);
 
     }
@@ -51,5 +47,4 @@ public class AES_Choice extends AppCompatActivity {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
-
 }
