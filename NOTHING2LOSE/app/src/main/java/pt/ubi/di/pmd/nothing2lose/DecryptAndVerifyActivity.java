@@ -1,6 +1,8 @@
 package pt.ubi.di.pmd.nothing2lose;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -10,6 +12,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import java.util.Arrays;
 import javax.crypto.SecretKey;
@@ -185,9 +189,11 @@ public class DecryptAndVerifyActivity extends AppCompatActivity {
 
                     return decryptedAward;
                 } else {
+                    decryptionOrVerificationFailedAlert("HMAC's do not match.");
                     Log.d("MyApp", "Signature's do not match.");
                 }
             } else {
+                decryptionOrVerificationFailedAlert("HMAC's do not match.");
                 Log.d("MyApp", "HMAC's do not match.");
             }
 
@@ -201,17 +207,16 @@ public class DecryptAndVerifyActivity extends AppCompatActivity {
          */
         protected void onPostExecute(Award decryptedAward) {
             super.onPostExecute(decryptedAward);
-            cancelBtn.setVisibility(View.INVISIBLE);
 
-            playAgainBtn.setVisibility(View.VISIBLE);
-
-            congratsTxt.setVisibility(View.VISIBLE);
-
-            titleTxt.setText("You won: " + decryptedAward.getPrice() + "$!");
-
-            categoryTxt.setVisibility(View.VISIBLE);
-            categoryTxt.setText(String.valueOf(decryptedAward.getCategory()));
-            categoryTxt.setTextColor(Color.parseColor(decryptedAward.getColor()));
+            if (decryptedAward != null){
+                cancelBtn.setVisibility(View.INVISIBLE);
+                playAgainBtn.setVisibility(View.VISIBLE);
+                congratsTxt.setVisibility(View.VISIBLE);
+                titleTxt.setText("You won: " + decryptedAward.getPrice() + "$!");
+                categoryTxt.setVisibility(View.VISIBLE);
+                categoryTxt.setText(String.valueOf(decryptedAward.getCategory()));
+                categoryTxt.setTextColor(Color.parseColor(decryptedAward.getColor()));
+            }
         }
     }
 
@@ -241,4 +246,21 @@ public class DecryptAndVerifyActivity extends AppCompatActivity {
         Intent goToHmacChoiceIntent = new Intent(this, HMACChoiceActivity.class);
         startActivity(goToHmacChoiceIntent);
     }
+
+    public void decryptionOrVerificationFailedAlert(String extra) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                showToast(DecryptAndVerifyActivity.this, "Ups! Something happened to the chosen award: " + extra);
+            }
+        });
+
+        Intent goToHmacChoiceIntent = new Intent(this, HMACChoiceActivity.class);
+        startActivity(goToHmacChoiceIntent);
+    }
+
+    private void showToast(Context context, String message) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+    }
+
 }
