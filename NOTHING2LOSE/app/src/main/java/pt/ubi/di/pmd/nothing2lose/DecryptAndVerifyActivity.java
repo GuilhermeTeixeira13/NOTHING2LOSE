@@ -105,6 +105,12 @@ public class DecryptAndVerifyActivity extends AppCompatActivity {
         if (decryptionTask != null && decryptionTask.getStatus() == AsyncTask.Status.RUNNING) {
             Log.d("MyApp", "STOPPED");
             decryptionTask.cancel(true);
+
+            // Create an intent to pass data back to the previous activity, if needed
+            Intent intent = new Intent();
+            intent.putExtra("key", 1); // Example: passing a key-value pair
+            setResult(RESULT_OK, intent); // Set the result code and intent
+
             return;
         }
     }

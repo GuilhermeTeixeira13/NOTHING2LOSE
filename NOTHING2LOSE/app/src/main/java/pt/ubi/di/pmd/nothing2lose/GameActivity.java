@@ -158,6 +158,34 @@ public class GameActivity extends AppCompatActivity {
     }
 
     /**
+     * Called when the activity is resumed. Performs necessary actions when the activity resumes.
+     * Checks the visibility of award buttons (Award A, Award B, Award C, and Award D), and if all of them are invisible,
+     * navigates to the HMACChoiceActivity.
+     */
+    private boolean areAllButtonsInvisible() {
+        return AwardABtn.getVisibility() == View.INVISIBLE &&
+                AwardBBtn.getVisibility() == View.INVISIBLE &&
+                AwardCBtn.getVisibility() == View.INVISIBLE &&
+                AwardDBtn.getVisibility() == View.INVISIBLE;
+    }
+
+    /**
+     * Called when the activity is resumed. Performs necessary actions when the activity resumes.
+     * Checks the visibility of award buttons (Award A, Award B, Award C, and Award D), and if all of them are invisible,
+     * navigates to the HMACChoiceActivity. It ensures a seamless user experience by mitigating navigational dead ends.
+     */
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (areAllButtonsInvisible()) {
+            Log.d("MyApp", "All buttons invisible!");
+            Intent goToHmacChoiceIntent = new Intent(this, HMACChoiceActivity.class);
+            startActivity(goToHmacChoiceIntent);
+        }
+    }
+
+    /**
      * This code contains two methods: generateRandomPrize and createAwards.
      * The generateRandomPrize method generates a random prize value based on a given lambda, minimum value, and maximum value.
      * The createAwards method creates a list of Award objects with randomly generated prize values.
