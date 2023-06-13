@@ -9,16 +9,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
-
 import org.mindrot.jbcrypt.BCrypt;
 import com.google.android.material.textfield.TextInputEditText;
 

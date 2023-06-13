@@ -184,7 +184,6 @@ public class GameActivity extends AppCompatActivity {
     public ArrayList<Award> createAwards(double lambda, double minPrize, double maxPrize) {
         ArrayList<Award> awards = new ArrayList<>();
         ArrayList<Integer> prizes = new ArrayList<>();
-        int category = 0;
 
         for (int i = 0; i < 4; i++) {
             int prize = (int) generateRandomPrize(lambda, minPrize, maxPrize);
@@ -193,8 +192,12 @@ public class GameActivity extends AppCompatActivity {
 
         Collections.sort(prizes);
 
+        int category = 0;
+        String[] categoryStrings = {"Simple", "Medium", "Rare", "Legendary!"};
+        String[] categoryColors = {"#F0FFFF", "#0000FF", "#FFD700", "#FF4500"};
+
         for (int prize : prizes) {
-            Award award = new Award(prize, category);
+            Award award = new Award(prize, categoryStrings[category], categoryColors[category]);
             awards.add(award);
             category++;
         }

@@ -1,25 +1,20 @@
 package pt.ubi.di.pmd.nothing2lose;
 
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
-
 import com.google.android.material.textfield.TextInputEditText;
-
 import org.mindrot.jbcrypt.BCrypt;
 
 /**

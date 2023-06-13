@@ -204,8 +204,8 @@ public class DecryptActivity extends AppCompatActivity {
             titleTxt.setText("You won: " + decryptedAward.getPrice() + "$!");
 
             categoryTxt.setVisibility(View.VISIBLE);
-            categoryTxt.setText(String.valueOf(decryptedAward.getCategoryString()));
-            categoryTxt.setTextColor(Color.parseColor(decryptedAward.getCategoryColor()));
+            categoryTxt.setText(String.valueOf(decryptedAward.getCategory()));
+            categoryTxt.setTextColor(Color.parseColor(decryptedAward.getColor()));
         }
     }
 

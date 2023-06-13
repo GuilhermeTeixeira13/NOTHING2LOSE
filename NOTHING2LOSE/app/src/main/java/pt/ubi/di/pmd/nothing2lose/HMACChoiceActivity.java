@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-
 import androidx.appcompat.app.AppCompatActivity;
 
 /**
@@ -16,9 +15,9 @@ import androidx.appcompat.app.AppCompatActivity;
  */
 public class HMACChoiceActivity extends AppCompatActivity {
 
-    Button Button_hash256;
-    Button Button_hash512;
-    Button Button_logout;
+    Button HMACSHA256Btn;
+    Button HMACSHA512Btn;
+    Button logoutBtn;
 
     /**
      * This method is called when the activity is created.
@@ -31,9 +30,9 @@ public class HMACChoiceActivity extends AppCompatActivity {
         setContentView(R.layout.hmac_choice);
 
         // Initialize the buttons by finding their corresponding views.
-        Button_hash256 = (Button) findViewById(R.id.hash256);
-        Button_hash512 = (Button) findViewById(R.id.hash512);
-        Button_logout = (Button) findViewById(R.id.logoutButton);
+        HMACSHA256Btn = (Button) findViewById(R.id.hash256);
+        HMACSHA512Btn = (Button) findViewById(R.id.hash512);
+        logoutBtn = (Button) findViewById(R.id.logoutButton);
     }
 
     /**

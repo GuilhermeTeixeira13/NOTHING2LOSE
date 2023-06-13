@@ -2,7 +2,6 @@ package pt.ubi.di.pmd.nothing2lose;
 
 import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
-
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;

@@ -2,7 +2,6 @@ package pt.ubi.di.pmd.nothing2lose;
 
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-
 import javax.crypto.KeyGenerator;
 import javax.crypto.Mac;
 import javax.crypto.SecretKey;
