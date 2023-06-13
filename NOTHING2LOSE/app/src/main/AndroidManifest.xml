@@ -34,7 +34,7 @@
 
         <activity android:name=".HMACChoiceActivity" />
 
-        <activity android:name=".DecryptActivity" />
+        <activity android:name=".DecryptAndVerifyActivity" />
 
         <activity android:name=".AESChoiceActivity"/>
     </application>

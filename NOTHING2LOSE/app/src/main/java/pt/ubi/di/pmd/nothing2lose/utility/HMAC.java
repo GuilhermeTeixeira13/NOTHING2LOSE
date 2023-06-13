@@ -1,4 +1,4 @@
-package pt.ubi.di.pmd.nothing2lose;
+package pt.ubi.di.pmd.nothing2lose.utility;
 
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;

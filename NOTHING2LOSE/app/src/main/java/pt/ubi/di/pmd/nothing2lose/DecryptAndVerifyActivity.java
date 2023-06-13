@@ -14,11 +14,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.util.Arrays;
 import javax.crypto.SecretKey;
 
+import pt.ubi.di.pmd.nothing2lose.utility.Award;
+import pt.ubi.di.pmd.nothing2lose.utility.EncryptDecrypt;
+import pt.ubi.di.pmd.nothing2lose.utility.HMAC;
+import pt.ubi.di.pmd.nothing2lose.utility.KeyGenerator;
+import pt.ubi.di.pmd.nothing2lose.utility.RSASignatureVerification;
+
 /**
  * The DecryptActivity class represents the activity for decrypting an award.
  * It handles the decryption process, cancellation, and UI updates based on the decryption result.
  */
-public class DecryptActivity extends AppCompatActivity {
+public class DecryptAndVerifyActivity extends AppCompatActivity {
 
     Button cancelBtn;
     Button playAgainBtn;

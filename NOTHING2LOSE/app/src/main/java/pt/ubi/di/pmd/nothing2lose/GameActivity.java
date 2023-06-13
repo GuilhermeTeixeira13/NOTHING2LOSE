@@ -18,6 +18,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import pt.ubi.di.pmd.nothing2lose.utility.Award;
+import pt.ubi.di.pmd.nothing2lose.utility.EncryptDecrypt;
+import pt.ubi.di.pmd.nothing2lose.utility.HMAC;
+import pt.ubi.di.pmd.nothing2lose.utility.KeyGenerator;
+import pt.ubi.di.pmd.nothing2lose.utility.RSAKeyPairGenerator;
+import pt.ubi.di.pmd.nothing2lose.utility.RSASignature;
+
 /**
  * GameActivity
  * This activity class represents the main game screen of the application.
@@ -337,7 +344,7 @@ public class GameActivity extends AppCompatActivity {
      * @param aesChoice The choice of AES algorithm.
      */
     public void goToDecrypt(byte[] hmac, SecretKey hmacKey, byte[] encAward, byte[] signature, String publicKey, String hmacChoice, String aesChoice) {
-        Intent goToDecryptIntent = new Intent(this, DecryptActivity.class);
+        Intent goToDecryptIntent = new Intent(this, DecryptAndVerifyActivity.class);
         goToDecryptIntent.putExtra("flag","FROM_GAME");
         goToDecryptIntent.putExtra("HMAC", hmac);
         goToDecryptIntent.putExtra("HMAC_KEY", hmacKey);

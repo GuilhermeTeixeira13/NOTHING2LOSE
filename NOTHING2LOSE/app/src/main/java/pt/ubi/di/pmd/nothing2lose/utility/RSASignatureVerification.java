@@ -1,4 +1,4 @@
-package pt.ubi.di.pmd.nothing2lose;
+package pt.ubi.di.pmd.nothing2lose.utility;
 
 import java.security.KeyFactory;
 import java.security.PublicKey;
