@@ -247,6 +247,11 @@ public class DecryptAndVerifyActivity extends AppCompatActivity {
         startActivity(goToHmacChoiceIntent);
     }
 
+    /**
+     * Displays an alert indicating that decryption or verification failed, and performs necessary actions.
+     *
+     * @param extra Additional information about the failure.
+     */
     public void decryptionOrVerificationFailedAlert(String extra) {
         runOnUiThread(new Runnable() {
             @Override
@@ -259,8 +264,13 @@ public class DecryptAndVerifyActivity extends AppCompatActivity {
         startActivity(goToHmacChoiceIntent);
     }
 
+    /**
+     * Displays a toast message.
+     *
+     * @param context The context in which the toast should be displayed.
+     * @param message The message to be shown in the toast.
+     */
     private void showToast(Context context, String message) {
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, message, Toast.LENGTH_LONG).show();
     }
-
 }
