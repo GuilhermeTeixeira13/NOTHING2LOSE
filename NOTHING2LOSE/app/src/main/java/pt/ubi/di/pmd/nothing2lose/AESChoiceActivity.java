@@ -17,8 +17,8 @@ import androidx.appcompat.app.AppCompatActivity;
 public class AESChoiceActivity extends AppCompatActivity {
 
     // Buttons for AES CBC and AES CTR encryption modes
-    Button Button_CBC;
-    Button Button_CTR;
+    Button CBCbtn;
+    Button CTRbtn;
 
     // Stores the HMAC value passed from the previous activity
     String hmacChoice;
@@ -38,8 +38,8 @@ public class AESChoiceActivity extends AppCompatActivity {
         hmacChoice = (String) getIntent().getSerializableExtra("HMAC");
 
         // Initialize the buttons by finding their respective views
-        Button_CBC = (Button) findViewById(R.id.ButtonCBC);
-        Button_CTR = (Button) findViewById(R.id.ButtonCTR);
+        CBCbtn = (Button) findViewById(R.id.ButtonCBC);
+        CTRbtn = (Button) findViewById(R.id.ButtonCTR);
     }
 
     /**

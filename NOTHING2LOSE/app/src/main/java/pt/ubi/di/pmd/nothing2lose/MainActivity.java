@@ -22,11 +22,21 @@ import com.google.android.material.textfield.TextInputEditText;
 
 import org.mindrot.jbcrypt.BCrypt;
 
+/**
+ * The MainActivity class is the entry point of the application and handles the login functionality.
+ */
 public class MainActivity extends AppCompatActivity {
 
     TextInputEditText editTextEmail;
     TextInputEditText editTextPassword;
 
+    /**
+     * This method is called when the activity is created.
+     * It sets the layout and retrieves the user's login credentials from SharedPreferences.
+     * If the credentials are not empty, it automatically logs in the user.
+     *
+     * @param savedInstanceState The saved instance state bundle.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +56,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * This method is called when the login button is clicked.
+     * It retrieves the email and password entered by the user and starts the login process.
+     *
+     * @param view The clicked view (login button).
+     */
     public void onLoginClicked(View view) {
         String email = editTextEmail.getText().toString().trim();
         String password = editTextPassword.getText().toString().trim();
@@ -59,11 +75,19 @@ public class MainActivity extends AppCompatActivity {
         new LoginTask().execute(email, password);
     }
 
+    /**
+     * This private inner class handles the login task in the background using AsyncTask.
+     * It connects to a PostgreSQL database to validate the user's credentials.
+     */
     private class LoginTask extends AsyncTask<String, Void, Boolean> {
         private Exception exception;
 
         private ProgressDialog progressDialog;
 
+        /**
+         * This method is called before the login task starts.
+         * It displays a progress dialog to indicate that the login process is in progress.
+         */
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -73,6 +97,13 @@ public class MainActivity extends AppCompatActivity {
             progressDialog.show();
         }
 
+        /**
+         * This method performs the login task in the background.
+         * It connects to the PostgreSQL database and checks if the provided email and password match.
+         *
+         * @param params The email and password passed as parameters.
+         * @return true if the login is successful, false otherwise.
+         */
         @Override
         protected Boolean doInBackground(String... params) {
             String email = params[0];
@@ -105,6 +136,12 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+        /**
+         * This method is called after the login task is completed.
+         * It dismisses the progress dialog and performs actions based on the login result.
+         *
+         * @param result The result of the login task (true if successful, false otherwise).
+         */
         @Override
         protected void onPostExecute(Boolean result) {
             progressDialog.dismiss();
@@ -118,16 +155,29 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Navigates to the HMACChoiceActivity.
+     */
     public void goTohmac_choicePage(){
         Intent intent = new Intent(this, HMACChoiceActivity.class);
         startActivity(intent);
     }
 
+    /**
+     * Handles the click event of the register link.
+     * Navigates to the RegisterActivity.
+     *
+     * @param view The View object that was clicked.
+     */
     public void onRegisterLinkClicked(View view){
         Intent intent = new Intent(this, RegisterActivity.class);
         startActivity(intent);
     }
 
+    /**
+     * Saves the user's email and password in SharedPreferences.
+     * This allows the data to be persisted and accessed later.
+     */
     public void saveUserInSharedPreferences(){
         SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();

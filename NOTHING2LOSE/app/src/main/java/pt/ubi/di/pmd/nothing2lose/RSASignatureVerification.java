@@ -6,6 +6,9 @@ import java.security.Signature;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 
+/**
+ * The RSASignatureVerification class is responsible for verifying digital signatures using RSA public keys.
+ */
 public class RSASignatureVerification {
 
     /**
@@ -17,7 +20,7 @@ public class RSASignatureVerification {
      * @return                  True if the signature is valid, false otherwise.
      * @throws Exception        If an error occurs during the verification process.
      */
-    public boolean verifyDigitalSignature(String data, String publicKeyBase64, byte[] signatureBytes) throws Exception {
+    public static boolean verifyDigitalSignature(String data, String publicKeyBase64, byte[] signatureBytes) throws Exception {
         // Decode the public key and signature from Base64 to bytes
         byte[] publicKeyBytes = Base64.getDecoder().decode(publicKeyBase64);
 
@@ -41,6 +44,5 @@ public class RSASignatureVerification {
 
         return signatureVerified;
     }
-
 }
 

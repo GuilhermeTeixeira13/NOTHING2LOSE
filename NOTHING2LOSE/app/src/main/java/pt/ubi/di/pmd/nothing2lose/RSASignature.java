@@ -1,12 +1,14 @@
 package pt.ubi.di.pmd.nothing2lose;
 
 import java.util.Base64;
-
 import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.Signature;
 import java.security.spec.PKCS8EncodedKeySpec;
 
+/**
+ * The RSASignature class is responsible for generating digital signatures using RSA private keys.
+ */
 public class RSASignature {
         /**
          * Generates a digital signature for the given data using the provided private key.
@@ -16,7 +18,7 @@ public class RSASignature {
          * @return                  The generated digital signature as an array of bytes.
          * @throws Exception        If an error occurs during the signature generation process.
          */
-        public byte[] generateDigitalSignature(String data, String privateKeyBase64) throws Exception {
+        public static byte[] generateDigitalSignature(String data, String privateKeyBase64) throws Exception {
             byte[] privateKeyBytes = Base64.getDecoder().decode(privateKeyBase64);
 
             PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(privateKeyBytes);

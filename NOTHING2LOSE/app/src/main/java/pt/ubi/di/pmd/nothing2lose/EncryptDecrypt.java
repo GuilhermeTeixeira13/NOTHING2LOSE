@@ -7,6 +7,9 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
+/**
+ * The EncryptDecrypt class provides methods for encryption and decryption of awards using CBC / CTR.
+ * */
 public class EncryptDecrypt {
     private static final String AES_CTR_ALGORITHM = "AES/CTR/NoPadding";
     private static final String AES_CBC_ALGORITHM = "AES/CBC/PKCS5Padding";

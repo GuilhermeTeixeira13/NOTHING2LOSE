@@ -2,6 +2,7 @@ package pt.ubi.di.pmd.nothing2lose;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -21,12 +22,22 @@ import android.widget.Toast;
 import org.mindrot.jbcrypt.BCrypt;
 import com.google.android.material.textfield.TextInputEditText;
 
+
+/**
+ * The RegisterActivity class is responsible for handling user registration.
+ * It allows users to enter their email and password to create an account.
+ */
 public class RegisterActivity extends AppCompatActivity {
 
     TextInputEditText editTextEmail;
     TextInputEditText editTextPassword;
     TextInputEditText editTextPasswordRepeat;
 
+    /**
+     * Called when the activity is created.
+     * Sets the layout and initializes the UI elements.
+     * @param savedInstanceState The saved instance state.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,6 +48,12 @@ public class RegisterActivity extends AppCompatActivity {
        editTextPasswordRepeat = findViewById(R.id.editTextPasswordRepeat);
     }
 
+    /**
+     * Handles the click event of the register button.
+     * Validates the input fields and starts the UserRegistrationTask to register the user.
+     *
+     * @param view The View object that was clicked.
+     */
     public void onRegisterClicked(View view) {
         String email = editTextEmail.getText().toString().trim();
         String password = editTextPassword.getText().toString().trim();
@@ -57,11 +74,18 @@ public class RegisterActivity extends AppCompatActivity {
         new UserRegistrationTask().execute(email, password);
     }
 
+    /**
+     * The UserRegistrationTask class is an AsyncTask used to perform user registration in the background.
+     * It connects to a PostgreSQL database and checks if the email is available before inserting the new user.
+     */
+    @SuppressLint("StaticFieldLeak")
     private class UserRegistrationTask extends AsyncTask<String, Void, Boolean> {
-        private Exception exception;
-
         private ProgressDialog progressDialog;
 
+        /**
+         * This method is called before the user registration task starts.
+         * It displays a progress dialog to indicate that the registration process is in progress.
+         */
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -71,6 +95,13 @@ public class RegisterActivity extends AppCompatActivity {
             progressDialog.show();
         }
 
+        /**
+         * This method performs the user registration task in the background.
+         * It connects to the PostgreSQL database and checks if the email is available before inserting the new user.
+         *
+         * @param params The email and password passed as parameters.
+         * @return true if the registration is successful, false otherwise.
+         */
         @Override
         protected Boolean doInBackground(String... params) {
             String email = params[0];
@@ -106,11 +137,15 @@ public class RegisterActivity extends AppCompatActivity {
                 }
             } catch (Exception e) {
                 Log.e("MyApp", "Error executing query", e);
-                exception = e;
             }
             return false;
         }
 
+        /**
+         * This method is called after the user registration task is completed.
+         * It dismisses the progress dialog and performs actions based on the registration result.
+         * @param result The result of the user registration task (true if successful, false otherwise).
+         */
         @Override
         protected void onPostExecute(Boolean result) {
             progressDialog.dismiss();
@@ -125,23 +160,35 @@ public class RegisterActivity extends AppCompatActivity {
         }
     }
 
-
+    /**
+     * Handles the click event of the login link.
+     * Navigates to the MainActivity.
+     *
+     * @param view The View object that was clicked.
+     */
     public void onLoginLinkClicked(View view){
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
 
+    /**
+     * Navigates to the GameActivity.
+     */
     public void goToGamePage(){
         Intent intent = new Intent(this, GameActivity.class);
         startActivity(intent);
     }
 
+    /**
+     * Saves the user's email and password in SharedPreferences.
+     * This allows the data to be persisted and accessed later.
+     */
     public void saveUserInSharedPreferences(){
         SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
         editor.putString("email", editTextEmail.getText().toString());
         editor.putString("password", editTextPassword.getText().toString());
-        editor.commit();
+        editor.apply();
     }
 }

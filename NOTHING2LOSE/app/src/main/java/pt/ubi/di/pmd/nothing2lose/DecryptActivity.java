@@ -23,18 +23,16 @@ public class DecryptActivity extends AppCompatActivity {
     Button cancelBtn;
     Button playAgainBtn;
     TextView titleTxt;
-    TextView congratzTxt;
+    TextView congratsTxt;
     TextView categoryTxt;
 
     byte[] initialHMAC;
-    byte[] newHMAC;
-
+    byte[] currentHMAC;
     SecretKey hmacKey;
     byte[] encAward;
+    byte[] awardSignature;
+    String awardPublicKey;
 
-    byte[] signature;
-
-    String publicKey;
     String hmacChoice;
     String aesChoice;
 
@@ -55,8 +53,8 @@ public class DecryptActivity extends AppCompatActivity {
         playAgainBtn = (Button) findViewById(R.id.play_again_button);
         playAgainBtn.setVisibility(View.INVISIBLE);
         titleTxt = (TextView) findViewById(R.id.titleText);
-        congratzTxt = (TextView) findViewById(R.id.congratulations);
-        congratzTxt.setVisibility(View.INVISIBLE);
+        congratsTxt = (TextView) findViewById(R.id.congratulations);
+        congratsTxt.setVisibility(View.INVISIBLE);
         categoryTxt = (TextView) findViewById(R.id.award_category);
         categoryTxt.setVisibility(View.INVISIBLE);
 
@@ -67,8 +65,8 @@ public class DecryptActivity extends AppCompatActivity {
             initialHMAC = (byte[]) getIntent().getSerializableExtra("HMAC");
             hmacKey = (SecretKey) getIntent().getSerializableExtra("HMAC_KEY");
             encAward = (byte[]) getIntent().getSerializableExtra("ENC_AWARD");
-            signature = (byte[]) getIntent().getSerializableExtra("SIGNATURE");
-            publicKey = (String) getIntent().getSerializableExtra("PUBLIC_KEY");
+            awardSignature = (byte[]) getIntent().getSerializableExtra("SIGNATURE");
+            awardPublicKey = (String) getIntent().getSerializableExtra("PUBLIC_KEY");
             hmacChoice = (String) getIntent().getSerializableExtra("HMAC_Choice");
             aesChoice = (String) getIntent().getSerializableExtra("AES_Choice");
         }
@@ -131,26 +129,24 @@ public class DecryptActivity extends AppCompatActivity {
             long startTime = System.currentTimeMillis();
 
             int keyLength = 128;
-            byte[] key = new byte[keyLength / 8];
+            byte[] key;
 
             // Iterate through all possible combinations
             for (int i = 0; i < Math.pow(2, keyLength); i++) {
-                // Convert the decimal value to binary and update the key
                 String binaryString = String.format("%" + keyLength + "s", Integer.toBinaryString(i)).replace(' ', '0');
                 key = binaryStringToByteArray(binaryString);
 
-                if (isCancelled()) {
+                if (isCancelled())
                     return null;
-                }
 
                 try {
-                    System.out.println("testing: " + KeyGen.byteArrayToString(key));
+                    System.out.println("testing: " + KeyGenerator.byteArrayToString(key));
 
-                    if (aesChoice.equals("CBC")) {
+                    if (aesChoice.equals("CBC"))
                         decryptedAward = EncryptDecrypt.decryptAwardCBC(key, encAward);
-                    } else if (aesChoice.equals("CTR")) {
+                    else if (aesChoice.equals("CTR"))
                         decryptedAward = EncryptDecrypt.decryptAwardCTR(key, encAward);
-                    }
+
                     // Successful decryption
                     break;
                 } catch (Exception e) {
@@ -160,28 +156,25 @@ public class DecryptActivity extends AppCompatActivity {
 
             long endTime = System.currentTimeMillis();
             long elapsedTime = endTime - startTime;
-
             Log.d("MyApp", "Decryption time: " + elapsedTime / 1000 + " seconds");
 
-            if (hmacChoice.equals("HMAC256")) {
-                newHMAC = HMAC.calculateHMAC256(hmacKey, decryptedAward);
-            } else if (hmacChoice.equals("HMAC512")) {
-                newHMAC = HMAC.calculateHMAC512(hmacKey, decryptedAward);
-            }
-            if (Arrays.equals(initialHMAC, newHMAC)) {
+            if (hmacChoice.equals("HMAC256"))
+                currentHMAC = HMAC.calculateHMAC256(hmacKey, decryptedAward);
+            else if (hmacChoice.equals("HMAC512"))
+                currentHMAC = HMAC.calculateHMAC512(hmacKey, decryptedAward);
+
+            if (Arrays.equals(initialHMAC, currentHMAC)) {
                 Log.d("MyApp", "SUCCESS! HMAC's match.");
 
-                RSASignatureVerification rsaVerification = new RSASignatureVerification();
                 boolean verificationSignature = false;
 
                 try {
-                    verificationSignature = rsaVerification.verifyDigitalSignature(decryptedAward.toString(), publicKey, signature);
+                    verificationSignature = RSASignatureVerification.verifyDigitalSignature(decryptedAward.toString(), awardPublicKey, awardSignature);
                 } catch (Exception e) {
                     Log.e("MyApp", e.toString());
                 }
                 if (verificationSignature) {
                     Log.d("MyApp", "SUCCESS! Signature's match.");
-
                     Log.d("MyApp", "SUCCESS! Decrypted Award: " + decryptedAward);
 
                     return decryptedAward;
@@ -206,7 +199,7 @@ public class DecryptActivity extends AppCompatActivity {
 
             playAgainBtn.setVisibility(View.VISIBLE);
 
-            congratzTxt.setVisibility(View.VISIBLE);
+            congratsTxt.setVisibility(View.VISIBLE);
 
             titleTxt.setText("You won: " + decryptedAward.getPrice() + "$!");
 
