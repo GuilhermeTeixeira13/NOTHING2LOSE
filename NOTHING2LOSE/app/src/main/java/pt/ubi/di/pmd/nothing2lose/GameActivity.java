@@ -146,7 +146,7 @@ public class GameActivity extends AppCompatActivity {
             }
         }
 
-        List<Integer> awardsShuffled = new ArrayList<>(Arrays.asList(0, 1, 2, 3));
+        awardsShuffled = new ArrayList<>(Arrays.asList(0, 1, 2, 3));
         Collections.shuffle(awardsShuffled);
     }
 
