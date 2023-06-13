@@ -14,8 +14,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.util.Arrays;
 import javax.crypto.SecretKey;
 
-
+/**
+ * The DecryptActivity class represents the activity for decrypting an award.
+ * It handles the decryption process, cancellation, and UI updates based on the decryption result.
+ */
 public class DecryptActivity extends AppCompatActivity {
+
     Button cancelBtn;
     Button playAgainBtn;
     TextView titleTxt;
@@ -36,7 +40,12 @@ public class DecryptActivity extends AppCompatActivity {
 
     private DecryptionTask decryptionTask;
 
-
+    /**
+     * Called when the activity is created. Initializes the UI elements, retrieves the decryption parameters from the intent,
+     * and starts the decryption task.
+     *
+     * @param savedInstanceState The saved instance state bundle.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,9 +61,9 @@ public class DecryptActivity extends AppCompatActivity {
         categoryTxt.setVisibility(View.INVISIBLE);
 
         Intent intent = getIntent();
-        String checkFlag= intent.getStringExtra("flag");
+        String checkFlag = intent.getStringExtra("flag");
 
-        if(checkFlag.equals("FROM_GAME")){
+        if (checkFlag.equals("FROM_GAME")) {
             initialHMAC = (byte[]) getIntent().getSerializableExtra("HMAC");
             hmacKey = (SecretKey) getIntent().getSerializableExtra("HMAC_KEY");
             encAward = (byte[]) getIntent().getSerializableExtra("ENC_AWARD");
@@ -68,11 +77,19 @@ public class DecryptActivity extends AppCompatActivity {
         decryptionTask.execute();
     }
 
+    /**
+     * Overrides the onBackPressed method to prevent going back from the decryption screen.
+     */
     @Override
     public void onBackPressed() {
-
+        // Disable the back button functionality
     }
 
+    /**
+     * Handles the cancellation button click event. Stops the decryption task if it is running.
+     *
+     * @param v The view that triggered the event.
+     */
     public void CancelButtonClicked(View v) {
         super.onBackPressed();
 
@@ -84,35 +101,60 @@ public class DecryptActivity extends AppCompatActivity {
         }
     }
 
+
+    // Helper method to convert a binary string to a byte array
+    private static byte[] binaryStringToByteArray(String binaryString) {
+        byte[] byteArray = new byte[binaryString.length() / 8];
+        for (int i = 0; i < byteArray.length; i++) {
+            String byteString = binaryString.substring(i * 8, (i + 1) * 8);
+            byteArray[i] = (byte) Integer.parseInt(byteString, 2);
+        }
+        return byteArray;
+    }
+
+
+    /**
+     * The DecryptionTask class represents an asynchronous task for performing the decryption process in the background.
+     * It decrypts the award using different keys until a successful decryption or cancellation occurs.
+     */
     private class DecryptionTask extends AsyncTask<Void, Void, Award> {
 
+        /**
+         * Performs the decryption process in the background.
+         *
+         * @param voids The input parameters (not used).
+         * @return The decrypted award if successful, null otherwise.
+         */
         protected Award doInBackground(Void... voids) {
-            Award DecryptedAward = null;
-            byte[] key = new byte[16];
+            Award decryptedAward = null;
 
             long startTime = System.currentTimeMillis();
 
-            for (int i = 0; i < (1 << 30); i++) {
+            int keyLength = 128;
+            byte[] key = new byte[keyLength / 8];
 
-                for (int j = 0; j < 4; j++) {
-                    key[j] = (byte) ((i >> (j * 8)) & 0xFF);
-                }
+            // Iterate through all possible combinations
+            for (int i = 0; i < Math.pow(2, keyLength); i++) {
+                // Convert the decimal value to binary and update the key
+                String binaryString = String.format("%" + keyLength + "s", Integer.toBinaryString(i)).replace(' ', '0');
+                key = binaryStringToByteArray(binaryString);
 
                 if (isCancelled()) {
                     return null;
                 }
 
                 try {
+                    System.out.println("testing: " + KeyGen.byteArrayToString(key));
+
                     if (aesChoice.equals("CBC")) {
-                        DecryptedAward = EncryptDecrypt.decryptAwardCBC(key, encAward);
-                    }else if (aesChoice.equals("CTR")){
-                        DecryptedAward = EncryptDecrypt.decryptAwardCTR(key, encAward);
+                        decryptedAward = EncryptDecrypt.decryptAwardCBC(key, encAward);
+                    } else if (aesChoice.equals("CTR")) {
+                        decryptedAward = EncryptDecrypt.decryptAwardCTR(key, encAward);
                     }
                     // Successful decryption
                     break;
                 } catch (Exception e) {
                     // Decryption failed
-                    continue;
                 }
             }
 
@@ -122,9 +164,9 @@ public class DecryptActivity extends AppCompatActivity {
             Log.d("MyApp", "Decryption time: " + elapsedTime / 1000 + " seconds");
 
             if (hmacChoice.equals("HMAC256")) {
-                newHMAC = HMAC.calculateHMAC256(hmacKey, DecryptedAward);
-            } else if (hmacChoice.equals("HMAC512")){
-                newHMAC = HMAC.calculateHMAC512(hmacKey, DecryptedAward);
+                newHMAC = HMAC.calculateHMAC256(hmacKey, decryptedAward);
+            } else if (hmacChoice.equals("HMAC512")) {
+                newHMAC = HMAC.calculateHMAC512(hmacKey, decryptedAward);
             }
             if (Arrays.equals(initialHMAC, newHMAC)) {
                 Log.d("MyApp", "SUCCESS! HMAC's match.");
@@ -133,16 +175,16 @@ public class DecryptActivity extends AppCompatActivity {
                 boolean verificationSignature = false;
 
                 try {
-                    verificationSignature = rsaVerification.verifyDigitalSignature(DecryptedAward.toString(), publicKey, signature);
+                    verificationSignature = rsaVerification.verifyDigitalSignature(decryptedAward.toString(), publicKey, signature);
                 } catch (Exception e) {
                     Log.e("MyApp", e.toString());
                 }
                 if (verificationSignature) {
                     Log.d("MyApp", "SUCCESS! Signature's match.");
 
-                    Log.d("MyApp", "SUCCESS! Decrypted Award: " + DecryptedAward);
+                    Log.d("MyApp", "SUCCESS! Decrypted Award: " + decryptedAward);
 
-                    return DecryptedAward;
+                    return decryptedAward;
                 } else {
                     Log.d("MyApp", "Signature's do not match.");
                 }
@@ -153,7 +195,11 @@ public class DecryptActivity extends AppCompatActivity {
             return null;
         }
 
-
+        /**
+         * Executes after the decryption task is completed. Updates the UI elements based on the decryption result.
+         *
+         * @param decryptedAward The decrypted award if successful, null otherwise.
+         */
         protected void onPostExecute(Award decryptedAward) {
             super.onPostExecute(decryptedAward);
             cancelBtn.setVisibility(View.INVISIBLE);
@@ -170,7 +216,12 @@ public class DecryptActivity extends AppCompatActivity {
         }
     }
 
-    public void onLogoutClicked(View v){
+    /**
+     * Handles the logout button click event. Removes the user's credentials from SharedPreferences and navigates to the login screen.
+     *
+     * @param v The view that triggered the event.
+     */
+    public void onLogoutClicked(View v) {
         SharedPreferences preferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
 
@@ -182,7 +233,12 @@ public class DecryptActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void PlayAgainButtonClicked (View v) {
+    /**
+     * Handles the play again button click event. Navigates to the HMACChoiceActivity.
+     *
+     * @param v The view that triggered the event.
+     */
+    public void PlayAgainButtonClicked(View v) {
         Intent goToHmacChoiceIntent = new Intent(this, HMACChoiceActivity.class);
         startActivity(goToHmacChoiceIntent);
     }

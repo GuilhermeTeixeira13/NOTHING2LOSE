@@ -71,7 +71,7 @@ public class GameActivity extends AppCompatActivity {
         // Generate encryption keys using KeyGen class.
         encKeys = KeyGen.generateKeys();
         for (byte[] key : encKeys) {
-            String keyString = KeyGen.byteArrayToHexString(key);
+            String keyString = KeyGen.byteArrayToString(key);
             Log.d("MyApp", "ENC KEY = " + keyString);
         }
 
@@ -201,7 +201,7 @@ public class GameActivity extends AppCompatActivity {
         byte [] signature = digitalSignaturesList.get(listShuffled.get(0));
         String publicKey = publicKeysList.get(listShuffled.get(0));
         Log.d("MyApp", "CHOOSED AWARD: " + award);
-        Log.d("MyApp", "ENC KEY: " + KeyGen.byteArrayToHexString(encKey));
+        Log.d("MyApp", "ENC KEY: " + KeyGen.byteArrayToString(encKey));
         Log.d("MyApp", "HMAC: " + HMAC.byteArrayToHexString(hmac));
         Log.d("MyApp", "CIPHER: " + Base64.getEncoder().encodeToString(encAward));
         Log.d("MyApp", "AWARD SIGNATURE = " + Base64.getEncoder().encodeToString(signature));
@@ -223,7 +223,7 @@ public class GameActivity extends AppCompatActivity {
         String publicKey = publicKeysList.get(listShuffled.get(1));
 
         Log.d("MyApp", "CHOOSED AWARD: " + award);
-        Log.d("MyApp", "ENC KEY: " + KeyGen.byteArrayToHexString(encKey));
+        Log.d("MyApp", "ENC KEY: " + KeyGen.byteArrayToString(encKey));
         Log.d("MyApp", "HMAC: " + HMAC.byteArrayToHexString(hmac));
         Log.d("MyApp", "CIPHER: " + Base64.getEncoder().encodeToString(encAward));
         Log.d("MyApp", "AWARD SIGNATURE = " + Base64.getEncoder().encodeToString(signature));
@@ -246,7 +246,7 @@ public class GameActivity extends AppCompatActivity {
         String publicKey = publicKeysList.get(listShuffled.get(2));
 
         Log.d("MyApp", "CHOOSED AWARD: " + award);
-        Log.d("MyApp", "ENC KEY: " + KeyGen.byteArrayToHexString(encKey));
+        Log.d("MyApp", "ENC KEY: " + KeyGen.byteArrayToString(encKey));
         Log.d("MyApp", "HMAC: " + HMAC.byteArrayToHexString(hmac));
         Log.d("MyApp", "CIPHER: " + Base64.getEncoder().encodeToString(encAward));
         Log.d("MyApp", "AWARD SIGNATURE = " + Base64.getEncoder().encodeToString(signature));
@@ -268,7 +268,7 @@ public class GameActivity extends AppCompatActivity {
         String publicKey = publicKeysList.get(listShuffled.get(3));
 
         Log.d("MyApp", "CHOOSED AWARD: " + award);
-        Log.d("MyApp", "ENC KEY: " + KeyGen.byteArrayToHexString(encKey));
+        Log.d("MyApp", "ENC KEY: " + KeyGen.byteArrayToString(encKey));
         Log.d("MyApp", "HMAC: " + HMAC.byteArrayToHexString(hmac));
         Log.d("MyApp", "CIPHER: " + Base64.getEncoder().encodeToString(encAward));
         Log.d("MyApp", "AWARD SIGNATURE = " + Base64.getEncoder().encodeToString(signature));
