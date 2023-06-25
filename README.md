@@ -1,6 +1,6 @@
 # Mystery Lottery Game
 
-https://www.youtube.com/watch?v=UfifT17lb00
+[![NOTHING2LOSE DEMO](http://img.youtube.com/vi/UfifT17lb00/0.jpg)](https://www.youtube.com/watch?v=UfifT17lb00 "Watch on Youtube")
 
 This project aims to develop a system that generates four encrypted lottery tickets with hidden prizes and allows users to decipher one of those tickets. The encryption techniques employed in this system create exciting mystery games with challenging puzzles. The four tickets should have different values (e.g., a simple prize of 1 rune, a medium prize of 2 runes, a rare prize of 4 runes, and a legendary prize of 8 runes) and should incrementally become more difficult to open. In other words, if a user selects a ticket with a higher prize (unaware of the value), it should take more time to decipher (e.g., the ticket with a simple prize should take 30 seconds, while the medium prize should take double that time, i.e., 60 seconds, and the legendary prize should take 4 minutes). The system to be built should simulate the following steps:
 
