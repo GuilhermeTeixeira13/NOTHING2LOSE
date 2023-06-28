@@ -31,3 +31,6 @@ To further enhance the system and expand its capabilities, consider implementing
 3. In addition to using message authentication codes to verify successful decryption, the system incorporates RSA digital signatures (the system should be able to generate an RSA key pair).
 4. Invent intelligent decryption assistance schemes (e.g., correctly answering a question reduces the decryption time by revealing a portion of the encryption key).
 
+## Getting Started
+
+To install the application, please download the file `nothing2lose.apk` and proceed to run it on your Android device.
